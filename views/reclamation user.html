@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+
+<html>
+
+
+<head>
+
+    <meta charset="utf-8">
+    <title>réclamation</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <!--Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Raleway:300,300i,400,400i,500i,600,600i,700,700i,800,900"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i,600i,700,900"
+        rel="stylesheet">
+    <!--css ressources-->
+    <link rel="stylesheet" type="text/css" href="css/4.1 bootstrap.min.css.css">
+    <!--font awesome-->
+    <!--Animate css-->
+    <link rel="stylesheet" href="css/7.2 animate.css.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <!--BX Slider-->
+    <link rel="stylesheet" type="text/css" href="css/5.2 jquery.bxslider.css.css">
+
+
+</head>
+
+
+<body>
+    <form method="POST" action="ajoutReclamation.php">
+        <!--reclamation-->
+        <section class="contact-us" id="CONTACT">
+            <div class="container wow bounceIn">
+                <div class="row">
+                    <div class="col-10-md col-md-1-offset">
+                        <div class="section-title">
+                            <h2>réclamation</h2>
+                            <p>si vous avez le moindre dérangement n'hesitez pas à nous la réclamer.Nous sommes là pour
+                                vous satisfaire.</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+			
+            <div class="contact-us-form wow bounceIn">
+                <div class="container">
+                    <form action="" role="form">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <input type="text" class="textInput" id="name" placeholder="Name"
+                                    onkeyup="lettersOnly(this)" required name="nom">
+                                <div id="email_div">
+                                    <input class="textInput" id="email" placeholder="Email" required
+                                        onkeyup="lettersOnly()" type="text" name="prenom">
+                                </div>
+                                <input type="text" class="textInput" id="subject" placeholder="Subject" name="email"
+                                    onkeyup="Validate()" required name="email">
+                            </div>
+                            <div class="col-md-8">
+                                <textarea class="textInput" id="message" cols="10" rows="25" name="texte" type="text"
+                                    placeholder="Message Text ..." required></textarea>
+                                <button type="submit" name="ajouter" value="ajouter"
+                                    class="btn btn-default submit-btn from-submit">
+                                    SEND
+                                </button>
+
+                            </div>
+                        </div>
+
+                </div>
+            </div>
+        </section>
+        <!--botstrap and javascrpt-->
+
+        <script src="js/jquery.js"></script>
+        <script src="js/4.2 bootstrap.min.js.js"></script>
+        <script src="js/custom.js"></script>
+        <!--ADD JS counter library-->
+        <script src="js/6.1 jquery.waypoints.min.js"></script>
+        <script src="js/6.2 jquery.counterup.min.js"></script>
+        <!--ADD WO JS file-->
+        <script src="js/7.1 wow.min.js.js"></script>
+        <!--BX Slider JS-->
+        <script src="js/5.1 jquery.bxslider.min.js.js"></script>
+    </form>
+</body>
+
+
+</html>
