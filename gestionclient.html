@@ -253,11 +253,11 @@
           <li class="sub-menu">
             <a class="active" href="javascript:;">
               <i class="fa fa-desktop"></i>
-              <span>Gestion    des boisons </span>
+              <span>Gestion stock</span>
               </a>
             <ul class="sub">
               
-              <li class="active"><a href="buttons.html">ajouter boisons </a></li>
+              <li class="active"><a href="buttons.html">ajouter produit</a></li>
               <li class="active"><a href="ajcategorie.html">ajouter categorie</a></li>
             </ul>
           </li>
@@ -367,37 +367,58 @@
            
             <form method="POST">
 <table>
-<form method="POST" action="doAddproduct.php">
-<div>
-    <label class="control-label">Libelle</label>
-    <div class="controls">
-    <input class="controle" type="text" name="pseudo" required pattern="[a-zA-Z-\.]{3,12}" placeholder="saisir le nom du plat">
-    </div>
-    <p>
-</div>
-<div>
-    <label class="control-label">Prix</label>
-    <div class="controls">
-    <input name="prix" type="number" required pattern="[0-9]" x-moz-errormessage="Le prix doix etre des chiffres" placeholder="Prix">
-    </div>
-    <p>
-</div>
-<div>
-    <label class="control-label">Image</label>
-    <div class="controls">
-    <input name="image" type="file" required>
-    </div>
-    <p>
-</div>
-<div>
-    <label class="control-label">Description</label>
-    <div class="controls">
-    <textarea rows="4" cols="50" name="description" placeholder="Description" required pattern="[A-Za-z].{4,}"></textarea>
-    </div>
-    <p>
-</div>
+<caption>Modifier Compte Client</caption>
+<tr>
+<td>CIN</td>
+<td><input type="number" name="cin" value="CIN" required pattern="[0-9]" placeholder="CIN"></td>
+</tr>
+<tr>
+<td>Nom</td>
+<td><input name="nom" type="text"required pattern="[a-zA-Z-\.]{3,12}" placeholder="NOM"></td>
+</tr>
+<tr>
+<td>Prenom</td>
+<td><input name="prenom" type="text" required pattern="[a-zA-Z-\.]{3,12}" placeholder="PRENOM"></td>
+</tr>
+<tr>
+<td>Email</td>
+<td><input type="email" name="mail" required placeholder="mail@server.com"></td>
+</tr>
+<tr>
+<td>date_naissance</td>
+<td><input type="date" name="date_naissance" ></td>
+</tr>
+<tr>
+<td>tel_portable</td>
+<td><input type="number" name="tel_portable" required pattern="[0-9]" placeholder="NUM DE TEL"></td>
+</tr>
+<tr>
+<td>adresse</td>
+<td><input type="text" name="adresse" value="ADRESSE"></td>
+</tr>
+<tr>
+<td>code_postal</td>
+<td><input type="number" name="code_postal" required pattern="[0-9]" placeholder="CODE POSTAL"></td>
+</tr>
+<tr>
+<td>password</td>
+<td><input type="Password" name="password" value="MOT DE PASSE"></td>
+</tr>
 
-    
+
+<td>image</td>
+<td><input type="file" name="image" placeholder="images"></td>
+</tr>
+
+
+<tr>
+<td></td>
+<td><input type="submit" name="modifier" value="modifier"></td>
+</tr>
+<tr>
+
+<td><input type="hidden" name="cin_ini" ></td>
+</tr>
 </table>
 
 </form>

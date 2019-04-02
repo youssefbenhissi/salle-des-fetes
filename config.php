@@ -7,7 +7,7 @@
 		{
      		if (!isset(self::$instance)) 
      		{
-				self::$instance = new PDO('mysql:host=localhost;dbname=utilisateur','root', '');
+				self::$instance = new PDO('mysql:host=localhost;dbname=site','root', '');
       		}
             return self::$instance;
    		}

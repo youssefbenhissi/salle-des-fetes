@@ -229,7 +229,7 @@
       </div>
       <div class="top-menu">
         <ul class="nav pull-right top-menu">
-          <li><a class="logout" href="Formaulairelogin.php">Logout</a></li>
+          <li><a class="logout" href="login.php">Logout</a></li>
         </ul>
       </div>
     </header>
@@ -243,7 +243,7 @@
         <!-- sidebar menu start-->
         <ul class="sidebar-menu" id="nav-accordion">
           <p class="centered"><a href="profile.html"><img src="img/1.jpg" class="img-circle" width="80"></a></p>
-          <h5 class="centered">Rahma </h5>
+          <h5 class="centered">Rahma</h5>
           <li class="mt">
             <a href="index.html">
               <i class="fa fa-dashboard"></i>
@@ -251,22 +251,21 @@
               </a>
           </li>
           <li class="sub-menu">
-            <a class="active" href="javascript:;">
+            <a href="javascript:;">
               <i class="fa fa-desktop"></i>
               <span>Gestion des chanteurs</span>
               </a>
             <ul class="sub">
               
-              
-              <li><a class="active" href="formulaireajout.php">ajouter chanteur</a></li>
+            <li><a href="formulaireajout.php">ajouter chanteur</a></li>
               <li><a href="formulairemodif.php">modifier chanteur</a></li>
               <li><a href="formulairesupp.php">supprimer chanteur</a></li>
-              <li><a href="formulaireafficher.php">afficher chanteur</a></li>
-    
+              <li><a  href="formulaireafficher.php">afficher chanteur</a></li>
+            
             </ul>
           </li>
            <li class="sub-menu">
-            <a href="javascript:;">
+            <a class="active" href="javascript:;">
               <i class="fa fa-desktop"></i>
               <span>Gestion des troupes musicales</span>
               </a>
@@ -274,7 +273,7 @@
             <li><a href="formulaireajouttroupe.php">ajouter troupe</a></li>
                 <li><a href="formulairemodiftroupe.php">modifier troupe</a></li>
                 <li><a href="formulairesupptroupe.php">supprimer troupe</a></li>
-                <li><a href="formulaireaffichertroupe.php">afficher troupe</a></li>
+                <li><a class="active"  href="formulaireaffichertroupe.php">afficher troupe</a></li>
             </ul>
           </li>
           <li class="sub-menu">
@@ -381,45 +380,55 @@
         <div class="row mt">
           <div class="col-lg-6 col-md-6 col-sm-12">
            
-            <h3>Ajouter un chanteur</h3>
-<form method="POST" action="ajoutchanteur.php">
-<div>
-    <label class="control-label">id</label>
-    <div class="controls">
-    <input class="controle" type="number" name="id" required pattern="[0-9]" x-moz-errormessage="L id doit etre des chiffres" placeholder="saisir le nom du produit">
-    </div>
-    <p>
-</div>
-<div>
-    <label class="control-label">nom</label>
-    <div class="controls">
-    <input class="controle" type="text" name="nom" required pattern="[a-zA-Z-\.]{3,12}" placeholder="saisir le nom du produit">
-    </div>
-    <p>
-</div>
-<div>
-    <label class="control-label">type</label>
-    <div class="controls">
-    <select name="type" id="type">
-                         <option value="Folk">Folk </option>
-                         <option value="Occidental">Occidental</option>
-                         <option value="Oriental">Oriental</option>
-                         <option value="Patrimony">Patrimony</option>
-                         <option value="Tarab">Tarab</option>
-                      
-                     </select>
-    </div>
-    <p>
-</div>
+            <h3>afficher les troupes musicales</h3>
+        
+<?PHP
 
+include "../../core/TroupeC.php";
+$chanteur1=new TroupeC();
+//$listeChanteur=$chanteur1->rechercherProduits();
+$liste=$chanteur1->afficherTroupe();
 
+?>
+
+<div >
     
-    <p>
-</div>
-<input type="submit" name="ajouter" value="Ajouter" class="btn btn-primary">
- <input type="reset" value="Reset" style="background-color:#0c2646;border-color:#0c2646; color:white;">
 
-    </form>
+<table border="1">
+                    <thead>
+                                        <tr>
+                                        <th class="product-price">Id</th>
+                                            <th class="product-name">Nom Troupe</th>
+                                            <th class="product-quantity">Type</th>
+                                            
+                                            
+                                            
+                                        </tr>
+                                    </thead>
+
+
+
+<?PHP
+foreach($liste as $row){
+    ?>
+     <tbody>
+    <tr>
+    <td><?PHP echo $row['id']; ?></td>
+    <td><?PHP echo $row['nom']; ?></td>
+    <td><?PHP echo $row['type']; ?></td>
+   
+  
+
+                                            
+    
+    </tr>
+    </tbody>
+    <?PHP
+}
+?>
+</table>
+
+
           </div>
           <!-- /col-lg-6 -->
         </div>

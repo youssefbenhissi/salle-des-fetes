@@ -43,7 +43,7 @@
         <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
       </div>
       <!--logo start-->
-      <a href="index.php" class="logo"><b>DASH<span>IO</span></b></a>
+      <a href="index.php" class="logo"><b>MONA<span>LISA</span></b></a>
       <!--logo end-->
       <div class="nav notify-row" id="top_menu">
         <!--  notification start -->
@@ -245,8 +245,8 @@
       <div id="sidebar" class="nav-collapse ">
         <!-- sidebar menu start-->
         <ul class="sidebar-menu" id="nav-accordion">
-          <p class="centered"><a href="profile.html"><img src="img/ui-sam.jpg" class="img-circle" width="80"></a></p>
-          <h5 class="centered">Sam Soffes</h5>
+          <p class="centered"><a href="profile.html"><img src="img/1.jpg" class="img-circle" width="80"></a></p>
+          <h5 class="centered">Rahma</h5>
           <li class="mt">
             <a class="active" href="index.html">
               <i class="fa fa-dashboard"></i>
@@ -256,13 +256,13 @@
           <li class="sub-menu">
             <a href="javascript:;">
               <i class="fa fa-desktop"></i>
-              <span>Gestion admininstrateur</span>
+              <span>Gestion chanteur</span>
               </a>
             <ul class="sub">
-              <li><a href="formulaireajout.php">ajouter administrateur</a></li>
-              <li><a href="formulairemodif.php">modifier administrateur</a></li>
-              <li><a href="formulairesupp.php">supprimer administrateur</a></li>
-              <li><a href="formulaireafficher.php">afficher administrateur</a></li>
+              <li><a href="formulaireajout.php">ajouter chanteur</a></li>
+              <li><a href="formulairemodif.php">modifier chanteur</a></li>
+              <li><a href="formulairesupp.php">supprimer chanteur</a></li>
+              <li><a href="formulaireafficher.php">afficher chanteur</a></li>
              
               
             </ul>
@@ -270,14 +270,13 @@
           <li class="sub-menu">
             <a href="javascript:;">
               <i class="fa fa-desktop"></i>
-              <span>Gestion des clients</span>
+              <span>Gestion des troupes musicales</span>
               </a>
             <ul class="sub">
-                        <li><a href="Desactivercompte.php">Desactiver un compte</a></li>
-                        <li><a  href="Reactivercompte.php">Reactiver Un compte</a></li>
-                        <li><a class="active" href="afficher liste client.php">Liste Des Clients</a></li>
-                        <li><a  href="recherchercompte.php">rechercher Un compte</a></li>
-                        <li><a  href="afficher liste client trier.php">affichage trier</a></li>
+            <li><a href="formulaireajouttroupe.php">ajouter troupe</a></li>
+              <li><a href="formulairemodiftroupe.php">modifier troupe</a></li>
+              <li><a href="formulairesupptroupe.php">supprimer troupe</a></li>
+              <li><a href="formulaireaffichertroupe.php">afficher troupe</a></li>
             </ul>
           </li>
           <li class="sub-menu">
@@ -847,7 +846,7 @@
         // (string | mandatory) the text inside the notification
         text: 'Hover me to enable the Close Button. You can hide the left sidebar clicking on the button next to the logo.',
         // (string | optional) the image to display on the left
-        image: 'img/ui-sam.jpg',
+        image: 'img/1.jpg',
         // (bool | optional) if you want it to fade out on its own or just sit there
         sticky: false,
         // (int | optional) the time you want it to be alive for before fading out

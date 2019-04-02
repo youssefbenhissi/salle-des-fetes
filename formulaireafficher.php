@@ -229,7 +229,7 @@
       </div>
       <div class="top-menu">
         <ul class="nav pull-right top-menu">
-          <li><a class="logout" href="login.html">Logout</a></li>
+          <li><a class="logout" href="login.php">Logout</a></li>
         </ul>
       </div>
     </header>
@@ -380,12 +380,13 @@
           <div class="col-lg-6 col-md-6 col-sm-12">
            
             <h3>afficher les administrateur</h3>
-
+        
 <?PHP
 
-include "core/adminC.php";
-$admin1=new adminC();
-$listeAdmin=$admin1->afficherAdmin();
+include "../../core/chanteurC.php";
+$chanteur1=new chanteurC();
+//$listeChanteur=$chanteur1->rechercherProduits();
+$liste=$chanteur1->afficherChanteur();
 
 ?>
 
@@ -396,24 +397,21 @@ $listeAdmin=$admin1->afficherAdmin();
 <tr>
 <td><h2>Id</h2></td>
 <td><h2>Nom</h2></td>
-<td><h2>Prenom</h2></td>
-<td><h2>Login</h2></td>
-<td><h2>Mot De Passe</h2></td>
-<td><h2>Tache</h2></td>
+<td><h2>type</h2></td>
+<td><h2>image</h2></td>
+
 
 </tr>
 
 
 <?PHP
-foreach($listeAdmin as $row){
+foreach($liste as $row){
     ?>
     <tr>
-    <td><?PHP echo $row['idadmin']; ?></td>
+    <td><?PHP echo $row['id']; ?></td>
     <td><?PHP echo $row['nom']; ?></td>
-    <td><?PHP echo $row['prenom']; ?></td>
-    <td><?PHP echo $row['login']; ?></td>
-    <td><?PHP echo $row['mdp']; ?></td>
-    <td><?PHP echo $row['tache']; ?></td>
+    <td><?PHP echo $row['type']; ?></td>
+    <td><?PHP echo $row['urlImage']; ?></td>
     
     
     </tr>
@@ -423,9 +421,6 @@ foreach($listeAdmin as $row){
 </table>
 
 
-
-
-    </form>
           </div>
           <!-- /col-lg-6 -->
         </div>

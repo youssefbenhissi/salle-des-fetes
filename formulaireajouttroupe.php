@@ -242,8 +242,8 @@
       <div id="sidebar" class="nav-collapse ">
         <!-- sidebar menu start-->
         <ul class="sidebar-menu" id="nav-accordion">
-          <p class="centered"><a href="profile.html"><img src="img/1.jpg" class="img-circle" width="80"></a></p>
-          <h5 class="centered">Rahma </h5>
+          <p class="centered"><a href="profile.html"><img src="img/ui-sam.jpg" class="img-circle" width="80"></a></p>
+          <h5 class="centered">Sam Soffes</h5>
           <li class="mt">
             <a href="index.html">
               <i class="fa fa-dashboard"></i>
@@ -251,14 +251,14 @@
               </a>
           </li>
           <li class="sub-menu">
-            <a class="active" href="javascript:;">
+            <a  href="javascript:;">
               <i class="fa fa-desktop"></i>
               <span>Gestion des chanteurs</span>
               </a>
             <ul class="sub">
               
               
-              <li><a class="active" href="formulaireajout.php">ajouter chanteur</a></li>
+              <li><a  href="formulaireajout.php">ajouter chanteur</a></li>
               <li><a href="formulairemodif.php">modifier chanteur</a></li>
               <li><a href="formulairesupp.php">supprimer chanteur</a></li>
               <li><a href="formulaireafficher.php">afficher chanteur</a></li>
@@ -266,12 +266,12 @@
             </ul>
           </li>
            <li class="sub-menu">
-            <a href="javascript:;">
+            <a class="active" href="javascript:;">
               <i class="fa fa-desktop"></i>
               <span>Gestion des troupes musicales</span>
               </a>
             <ul class="sub">
-            <li><a href="formulaireajouttroupe.php">ajouter troupe</a></li>
+            <li><a class="active" href="formulaireajouttroupe.php">ajouter troupe</a></li>
                 <li><a href="formulairemodiftroupe.php">modifier troupe</a></li>
                 <li><a href="formulairesupptroupe.php">supprimer troupe</a></li>
                 <li><a href="formulaireaffichertroupe.php">afficher troupe</a></li>
@@ -381,8 +381,8 @@
         <div class="row mt">
           <div class="col-lg-6 col-md-6 col-sm-12">
            
-            <h3>Ajouter un chanteur</h3>
-<form method="POST" action="ajoutchanteur.php">
+            <h3>Ajouter une troupe</h3>
+<form method="POST" action="ajouttroupe.php">
 <div>
     <label class="control-label">id</label>
     <div class="controls">
@@ -393,7 +393,7 @@
 <div>
     <label class="control-label">nom</label>
     <div class="controls">
-    <input class="controle" type="text" name="nom" required pattern="[a-zA-Z-\.]{3,12}" placeholder="saisir le nom du produit">
+    <input class="controle" type="text" name="nom " required pattern="[a-zA-Z-\.]{3,12}" placeholder="saisir le nom du troupe">
     </div>
     <p>
 </div>
@@ -406,12 +406,10 @@
                          <option value="Oriental">Oriental</option>
                          <option value="Patrimony">Patrimony</option>
                          <option value="Tarab">Tarab</option>
-                      
                      </select>
     </div>
     <p>
 </div>
-
 
     
     <p>

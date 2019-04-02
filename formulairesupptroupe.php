@@ -229,7 +229,7 @@
       </div>
       <div class="top-menu">
         <ul class="nav pull-right top-menu">
-          <li><a class="logout" href="Formaulairelogin.php">Logout</a></li>
+          <li><a class="logout" href="login.html">Logout</a></li>
         </ul>
       </div>
     </header>
@@ -243,7 +243,7 @@
         <!-- sidebar menu start-->
         <ul class="sidebar-menu" id="nav-accordion">
           <p class="centered"><a href="profile.html"><img src="img/1.jpg" class="img-circle" width="80"></a></p>
-          <h5 class="centered">Rahma </h5>
+          <h5 class="centered">Rahma</h5>
           <li class="mt">
             <a href="index.html">
               <i class="fa fa-dashboard"></i>
@@ -251,29 +251,28 @@
               </a>
           </li>
           <li class="sub-menu">
-            <a class="active" href="javascript:;">
+            <a  href="javascript:;">
               <i class="fa fa-desktop"></i>
               <span>Gestion des chanteurs</span>
               </a>
             <ul class="sub">
               
-              
-              <li><a class="active" href="formulaireajout.php">ajouter chanteur</a></li>
+           <li><a href="formulaireajout.php">ajouter chanteur</a></li>
               <li><a href="formulairemodif.php">modifier chanteur</a></li>
               <li><a href="formulairesupp.php">supprimer chanteur</a></li>
               <li><a href="formulaireafficher.php">afficher chanteur</a></li>
-    
+              
             </ul>
           </li>
            <li class="sub-menu">
-            <a href="javascript:;">
+            <a class="active" href="javascript:;">
               <i class="fa fa-desktop"></i>
               <span>Gestion des troupes musicales</span>
               </a>
             <ul class="sub">
             <li><a href="formulaireajouttroupe.php">ajouter troupe</a></li>
                 <li><a href="formulairemodiftroupe.php">modifier troupe</a></li>
-                <li><a href="formulairesupptroupe.php">supprimer troupe</a></li>
+                <li><a class="active" href="formulairesupptroupe.php">supprimer troupe</a></li>
                 <li><a href="formulaireaffichertroupe.php">afficher troupe</a></li>
             </ul>
           </li>
@@ -381,42 +380,20 @@
         <div class="row mt">
           <div class="col-lg-6 col-md-6 col-sm-12">
            
-            <h3>Ajouter un chanteur</h3>
-<form method="POST" action="ajoutchanteur.php">
+            <h3>supprimer une troupe </h3>
+<form method="POST" action="supprimertroupe.php">
 <div>
-    <label class="control-label">id</label>
+    <label class="control-label">id troupe</label>
     <div class="controls">
-    <input class="controle" type="number" name="id" required pattern="[0-9]" x-moz-errormessage="L id doit etre des chiffres" placeholder="saisir le nom du produit">
+    <input class="controle" type="number" name="id"  placeholder="saisir l'identifiant">
     </div>
     <p>
 </div>
-<div>
-    <label class="control-label">nom</label>
-    <div class="controls">
-    <input class="controle" type="text" name="nom" required pattern="[a-zA-Z-\.]{3,12}" placeholder="saisir le nom du produit">
-    </div>
-    <p>
-</div>
-<div>
-    <label class="control-label">type</label>
-    <div class="controls">
-    <select name="type" id="type">
-                         <option value="Folk">Folk </option>
-                         <option value="Occidental">Occidental</option>
-                         <option value="Oriental">Oriental</option>
-                         <option value="Patrimony">Patrimony</option>
-                         <option value="Tarab">Tarab</option>
-                      
-                     </select>
-    </div>
-    <p>
-</div>
-
-
     
     <p>
 </div>
-<input type="submit" name="ajouter" value="Ajouter" class="btn btn-primary">
+<div>
+<input type="submit" name="supprimer" value="supprimer" class="btn btn-primary">
  <input type="reset" value="Reset" style="background-color:#0c2646;border-color:#0c2646; color:white;">
 
     </form>
