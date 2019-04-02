@@ -1,535 +1,906 @@
-<?php
-
-// Page created by Shepard [Fabian Pijcke] <Shepard8@laposte.net>
-// Arno Esterhuizen <arno.esterhuizen@gmail.com>
-// and Romain Bourdon <rromain@romainbourdon.com>
-// and Hervé Leclerc <herve.leclerc@alterway.fr>
-// Icons by Mark James <http://www.famfamfam.com/lab/icons/silk/>
-// Version 2.5 -> 3.0.0 by Dominique Ottello aka Otomatic
-// 3.1.7 - Replace integrated local base64 images by img/xxx.yyy
-//
-//
-//
-
-$server_dir = "../";
-
-require $server_dir.'scripts/config.inc.php';
-require $server_dir.'scripts/wampserver.lib.php';
-
-//chemin jusqu'aux fichiers alias
-$aliasDir = $server_dir.'alias/';
-
-//Fonctionne à condition d'avoir ServerSignature On et ServerTokens Full dans httpd.conf
-$server_software = $_SERVER['SERVER_SOFTWARE'];
-$error_content = '';
-
-// on récupère les versions des applis
-$phpVersion = $wampConf['phpVersion'];
-$apacheVersion = $wampConf['apacheVersion'];
-$doca_version = 'doca'.substr($apacheVersion,0,3);
-$mysqlVersion = $wampConf['mysqlVersion'];
-
-//On récupére la valeur de urlAddLocalhost
-$suppress_localhost = ($wampConf['urlAddLocalhost'] == 'off' ? true : false);
-
-//On récupère la valeur de VirtualHostMenu
-$VirtualHostMenu = $wampConf['VirtualHostSubMenu'];
-
-//on récupère la valeur de apachePortUsed
-$port = $wampConf['apachePortUsed'];
-$UrlPort = $port !== "80" ? ":".$port : '';
-//On récupère le ou les valeurs des ports en écoute dans Apache
-$ListenPorts = implode(' - ',listen_ports());
-//on récupère la valeur de mysqlPortUsed
-$Mysqlport = $wampConf['mysqlPortUsed'];
-
-
-// répertoires à ignorer dans les projets
-$projectsListIgnore = array ('.','..','wampthemes','wamplangues');
-
-// Recherche des différents thèmes disponibles
-$styleswitcher = '<select id="themes">'."\n";
-$themes = glob('wampthemes/*', GLOB_ONLYDIR);
-foreach ($themes as $theme) {
-    if (file_exists($theme.'/style.css')) {
-        $theme = str_replace('wampthemes/', '', $theme);
-        $styleswitcher .= '<option id="'.$theme.'">'.$theme.'</option>'."\n";
-    }
-}
-$styleswitcher .= '</select>'."\n";
-
-//affichage du phpinfo
-if (isset($_GET['phpinfo'])) {
-	$type_info = intval(trim($_GET['phpinfo']));
-	if($type_info < -1 || $type_info > 64)
-		$type_info = -1;
-	phpinfo($type_info);
-	exit();
-}
-
-// Language
-$langue = $wampConf['language'];
-$i_langues = glob('wamplangues/index_*.php');
-$languages = array();
-foreach ($i_langues as $value) {
-  $languages[] = str_replace(array('wamplangues/index_','.php'), '', $value);
-}
-$langueget = (!empty($_GET['lang']) ? strip_tags(trim($_GET['lang'])) : '');
-if(in_array($langueget,$languages))
-	$langue = $langueget;
-
-// Recherche des différentes langues disponibles
-$langueswitcher = '<form method="get" style="display:inline-block;"><select name="lang" id="langues" onchange="this.form.submit();">'."\n";
-$selected = false;
-foreach ($languages as $i_langue) {
-  $langueswitcher .= '<option value="'.$i_langue.'"';
-  if(!$selected && $langue == $i_langue) {
-  	$langueswitcher .= ' selected ';
-  	$selected = true;
-  }
-  $langueswitcher .= '>'.$i_langue.'</option>'."\n";
-}
-$langueswitcher .= '</select></form>';
-
-include('wamplangues/index_english.php');
-if(file_exists('wamplangues/index_'.$langue.'.php')) {
-	$langue_temp = $langues;
-	include('wamplangues/index_'.$langue.'.php');
-	$langues = array_merge($langue_temp, $langues);
-}
-
-//initialisation
-// Récupération MySQL si supporté
-$MySQLdb = '';
-if(isset($wampConf['SupportMySQL']) && $wampConf['SupportMySQL'] =='on') {
-	$defaultDBMSMySQL = ($wampConf['mysqlPortUsed'] == '3306') ? '&nbsp;-&nbsp;Default DBMS' : '';
-	$MySQLdb = <<< EOF
-<dt>{$langues['versm']}</dt>
-	<dd>${mysqlVersion}&nbsp;-&nbsp;{$langues['mysqlportUsed']}{$Mysqlport}{$defaultDBMSMySQL}&nbsp;-&nbsp; <a href='http://{$langues['docm']}'>{$langues['documentation']}</a></dd>
-EOF;
-}
-
-// Récupération MariaDB si supporté
-$MariaDB = '';
-if(isset($wampConf['SupportMariaDB']) && $wampConf['SupportMariaDB'] =='on') {
-	$defaultDBMSMaria = ($wampConf['mariaPortUsed'] == '3306') ? '&nbsp;-&nbsp;Default DBMS' : '';
-	$MariaDB = <<< EOF
-<dt>{$langues['versmaria']}</dt>
-  <dd>${c_mariadbVersion}&nbsp;-&nbsp;{$langues['mariaportUsed']}{$wampConf['mariaPortUsed']}{$defaultDBMSMaria}&nbsp;-&nbsp; <a href='http://{$langues['docmaria']}'>{$langues['documentation']}</a></dd>
-EOF;
-}
-if(empty($defaultDBMSMySQL))
-	$DBMSTypes = $MariaDB.$MySQLdb;
-else
-	$DBMSTypes = $MySQLdb.$MariaDB;
-
-// No Database Mysql System
-$noDBMS = (empty($MySQLdb) && empty($MariaDB)) ? true : false;
-$phpmyadminTool = $noDBMS ? '' : '<li><a href="phpmyadmin/">phpmyadmin</a></li>';
-
-$aliasContents = '';
-
-// récupération des alias
-if (is_dir($aliasDir))
-{
-    $handle=opendir($aliasDir);
-    while (($file = readdir($handle))!==false)
-    {
-	    if (is_file($aliasDir.$file) && strstr($file, '.conf'))
-	    {
-	    	if(!($noDBMS && ($file == 'phpmyadmin.conf' || $file == 'adminer.conf'))) {
-		    	$msg = '';
-		    	$aliasContents .= '<li><a href="'.str_replace('.conf','',$file).'/">'.str_replace('.conf','',$file).'</a></li>';
-		  	}
-	    }
-    }
-    closedir($handle);
-}
-if (empty($aliasContents))
-	$aliasContents = "<li>".$langues['txtNoAlias']."</li>\n";
-
-
-//Récupération des ServerName de httpd-vhosts.conf
-$addVhost = "<li><a href='add_vhost.php?lang=".$langue."'>".$langues['txtAddVhost']."</a></li>";
-if($VirtualHostMenu == "on") {
-	$vhostError = false;
-	$vhostErrorCorrected = true;
-	$error_message = array();
-    $allToolsClass = "four-columns";
-	$virtualHost = check_virtualhost();
-	$vhostsContents = '';
-	if($virtualHost['include_vhosts'] === false) {
-		$vhostsContents = "<li><i style='color:red;'>Error Include Apache</i></li>";
-		$vhostError = true;
-		$error_message[] = sprintf($langues['txtNoIncVhost'],$wampConf['apacheVersion']);
-	}
-	else {
-		if($virtualHost['vhosts_exist'] === false) {
-			$vhostsContents = "<li><i style='color:red;'>No vhosts file</i></li>";
-			$vhostError = true;
-			$error_message[] = sprintf($langues['txtNoVhostFile'],$virtualHost['vhosts_file']);
-		}
-		else {
-				if($virtualHost['nb_Server'] > 0) {
-				$port_number = true;
-				$nb_Server = $virtualHost['nb_Server'];
-				$nb_Virtual = $virtualHost['nb_Virtual'];
-				$nb_Document = $virtualHost['nb_Document'];
-				$nb_Directory = $virtualHost['nb_Directory'];
-				$nb_End_Directory = $virtualHost['nb_End_Directory'];
-
-				foreach($virtualHost['ServerName'] as $key => $value) {
-					if($virtualHost['ServerNameValid'][$value] === false) {
-						$vhostError = true;
-						$vhostErrorCorrected = false;
-						$vhostsContents .= '<li>'.$value.' - <i style="color:red;">syntax error</i></li>';
-						$error_message[] = sprintf($langues['txtServerName'],"<span style='color:black;'>".$value."</span>",$virtualHost['vhosts_file']);
-					}
-					elseif($virtualHost['ServerNameValid'][$value] === true) {
-						$UrlPortVH = ($virtualHost['ServerNamePort'][$value] != '80') ? ':'.$virtualHost['ServerNamePort'][$value] : '';
-						if(!$virtualHost['port_listen'] && $virtualHost['ServerNamePortListen'][$value] !== true || $virtualHost['ServerNamePortApacheVar'][$value] !== true) {
-							$value_url = ((strpos($value, ':') !== false) ? strstr($value,':',true) : $value);
-							$vhostsContents .= '<li>'.$value_url.$UrlPortVH.' - <i style="color:red;">Not a Listen port</i></li>';
-							if($virtualHost['ServerNamePortListen'][$value] !== true)
-								$msg_error = ' not an Apache Listen port';
-							elseif($virtualHost['ServerNamePortApacheVar'][$value] !== true)
-								$msg_error = ' not an Apache define variable';
-							if(!$vhostError) {
-								$vhostError = true;
-								$vhostErrorCorrected = false;
-								$error_message[] = "Port ".$UrlPortVH." used for the VirtualHost is ".$msg_error;
-							}
-						}
-						elseif($virtualHost['ServerNameIp'][$value] !== false) {
-							$vh_ip = $virtualHost['ServerNameIp'][$value];
-							if($virtualHost['ServerNameIpValid'][$value] !== false) {
-								$vhostsContents .= '<li><a href="http://'.$vh_ip.$UrlPortVH.'">'.$vh_ip.'</a> <i>('.$value.')</i></li>';
-							}
-							else {
-								$vhostError = true;
-								$vhostErrorCorrected = false;
-								$vhostsContents .= '<li>'.$vh_ip.' for '.$value.' - <i style="color:red;">IP not valid</i></li>';
-								$error_message[] = sprintf($langues['txtServerNameIp'],"<span style='color:black;'>".$vh_ip."</span>","<span style='color:black;'>".$value."</span>",$virtualHost['vhosts_file']);
-							}
-						}
-						elseif($virtualHost['DocRootNotwww'][$value] === false) {
-							$vhostError = true;
-							$vhostErrorCorrected = false;
-							$vhostsContents .= '<li>'.$value.' - <i style="color:red;">DocumentRoot error</i></li>';
-							$error_message[] = sprintf($langues['txtDocRoot'],"<span style='color:black;'>".$value."</span>","<span style='color:black;'>".$wwwDir."</span>");
-						}
-						elseif($virtualHost['ServerNameDev'][$value] === true) {
-							$vhostError = true;
-							$vhostErrorCorrected = false;
-							$vhostsContents .= '<li>'.$value.' - <i style="color:red;">TLD error</i></li>';
-							$error_message[] = sprintf($langues['txtTLDdev'],"<span style='color:black;'>".$value."</span>","<span style='color:black;'>.dev</span>");
-						}
-						else {
-							$value_url = ((strpos($value, ':') !== false) ? strstr($value,':',true) : $value);
-							$vhostsContents .= '<li><a href="http://'.$value_url.$UrlPortVH.'">'.$value.'</a></li>';
-						}
-					}
-					else {
-						$vhostError = true;
-						$error_message[] = sprintf($langues['txtVhostNotClean'],$virtualHost['vhosts_file']);
-					}
-				}
-				//Check number of <Directory equals </Directory
-				if($nb_End_Directory != $nb_Directory) {
-					$vhostError = true;
-					$vhostErrorCorrected = false;
-					$error_message[] = sprintf($langues['txtNbNotEqual'],"&lt;Directory ....&gt;","&lt;/Directory&gt;",$virtualHost['vhosts_file']);
-				}
-				//Check number of DocumentRoot equals to number of ServerName
-				if($nb_Document != $nb_Server) {
-					$vhostError = true;
-					$vhostErrorCorrected = false;
-					$error_message[] = sprintf($langues['txtNbNotEqual'],"DocumentRoot","ServerName",$virtualHost['vhosts_file']);
-				}
-				//Check validity of DocumentRoot
-				if($virtualHost['document'] === false) {
-					foreach($virtualHost['documentPath'] as $value) {
-						if($virtualHost['documentPathValid'][$value] === false) {
-							$documentPathError = $value;
-							$vhostError = true;
-							$vhostErrorCorrected = false;
-							$error_message[] = sprintf($langues['txtNoPath'],"<span style='color:black;'>".$value."</span>", "DocumentRoot", $virtualHost['vhosts_file']);
-							break;
-						}
-					}
-				}
-				//Check validity of Directory Path
-				if($virtualHost['directory'] === false) {
-					foreach($virtualHost['directoryPath'] as $value) {
-						if($virtualHost['directoryPathValid'][$value] === false) {
-							$documentPathError = $value;
-							$vhostError = true;
-							$vhostErrorCorrected = false;
-							$error_message[] = sprintf($langues['txtNoPath'],"<span style='color:black;'>".$value."</span>", "&lt;Directory ...", $virtualHost['vhosts_file']);
-							break;
-						}
-					}
-				}
-				//Check number of <VirtualHost equals or > to number of ServerName
-				if($nb_Server != $nb_Virtual && $wampConf['NotCheckDuplicate'] == 'off') {
-					$port_number = false;
-					$vhostError = true;
-					$vhostErrorCorrected = false;
-					$error_message[] = sprintf($langues['txtNbNotEqual'],"&lt;VirtualHost","ServerName",$virtualHost['vhosts_file']);
-				}
-				//Check number of port definition of <VirtualHost *:xx> equals to number of ServerName
-				if($virtualHost['nb_Virtual_Port'] != $nb_Virtual && $wampConf['NotCheckDuplicate'] == 'off') {
-					$port_number = false;
-					$vhostError = true;
-					$vhostErrorCorrected = false;
-					$error_message[] = sprintf($langues['txtNbNotEqual'],"port definition of &lt;VirtualHost *:xx&gt;","ServerName",$virtualHost['vhosts_file']);
-				}
-				//Check validity of port number
-				if($port_number && $virtualHost['port_number'] === false) {
-					$port_number = false;
-					$vhostError = true;
-					$vhostErrorCorrected = false;
-					$error_message[] = sprintf($langues['txtPortNumber'],"&lt;VirtualHost *:port&gt;",$virtualHost['vhosts_file']);
-				}
-				//Check if duplicate ServerName
-				if($virtualHost['nb_duplicate'] > 0) {
-					$DuplicateNames = '';
-					foreach($virtualHost['duplicate'] as $NameValue)
-						$DuplicateNames .= " ".$NameValue;
-					$vhostError = true;
-					$vhostErrorCorrected = false;
-					$error_message[] = "Duplicate ServerName <span style='color:blue;'>".$DuplicateNames."</span> into ".$virtualHost['vhosts_file'];
-				}
-				//Check if duplicate Server IP
-				if($virtualHost['nb_duplicateIp'] > 0) {
-					$DuplicateNames = '';
-					foreach($virtualHost['duplicateIp'] as $NameValue)
-						$DuplicateNames .= " ".$NameValue;
-					$vhostError = true;
-					$vhostErrorCorrected = false;
-					$error_message[] = "Duplicate IP <span style='color:blue;'>".$DuplicateNames."</span> into ".$virtualHost['vhosts_file'];
-				}
-			}
-		}
-	}
-	if(empty($vhostsContents)) {
-		$vhostsContents = "<li><i style='color:red:'>No VirtualHost</i></li>";
-		$vhostError = true;
-		$error_message[] = sprintf($langues['txtNoVhost'],$wampConf['apacheVersion']);
-	}
-	if(!$c_hostsFile_writable){
-		$vhostError = true;
-		$error_message[] = sprintf($langues['txtNotWritable'],$c_hostsFile)."<br>".nl2br($WarningMsg);
-	}
-	if($vhostError) {
-		$vhostsContents .= "<li><i style='color:red;'>Error(s)</i> See below</li>";
-		$error_content .= "<p style='color:red;'>";
-		foreach($error_message as $value) {
-			$error_content .= $value."<br />";
-		}
-		$error_content .= "</p>\n";
-		if($vhostErrorCorrected)
-			$addVhost = "<li><a href='add_vhost.php?lang=".$langue."'>".$langues['txtAddVhost']."</a> <span style='font-size:0.72em;color:red;'>".$langues['txtCorrected']."</span></li>";
-	}
-}
-else {
-    $allToolsClass = "three-columns";
-}
-
-//Fin Récupération ServerName
-
-// récupération des projets
-$handle=opendir(".");
-$projectContents = '';
-while (($file = readdir($handle))!==false)
-{
-	if (is_dir($file) && !in_array($file,$projectsListIgnore))
-	{
-		$projectContents .= '<li><a href="';
-		if($suppress_localhost)
-			$projectContents .= 'http://'.$file.$UrlPort.'/"';
-		else
-			$projectContents .= 'http://localhost'.$UrlPort.'/'.$file.'/"';
-		$projectContents .= '>'.$file.'</a></li>';
-	}
-}
-closedir($handle);
-if (empty($projectContents))
-	$projectContents = "<li>".$langues['txtNoProjet']."</li>\n";
-else {
-	if(strpos($projectContents,"http://localhost/") !== false) {
-		$projectContents .= "<li><i style='color:blue;'>Warning:</i> See below</li>";
-		if(!isset($error_content))
-			$error_content = '';
-		$error_content .= "<p style='color:blue;'>".sprintf($langues['nolocalhost'],$wampConf['apacheVersion'])."</p>";
-	}
-}
-
-//initialisation
-$phpExtContents = '';
-
-// récupération des extensions PHP
-$loaded_extensions = get_loaded_extensions();
-// classement alphabétique des extensions
-setlocale(LC_ALL,"{$langues['locale']}");
-sort($loaded_extensions,SORT_LOCALE_STRING);
-foreach ($loaded_extensions as $extension)
-	$phpExtContents .= "<li>${extension}</li>";
-
-//vérifications diverses - Quel php.ini est chargé ?
-$phpini = strtolower(trim(str_replace("\\","/",php_ini_loaded_file())));
-$c_phpConfFileOri = strtolower($c_phpVersionDir.'/php'.$wampConf['phpVersion'].'/'.$phpConfFileForApache);
-$c_phpCliConf = strtolower($c_phpVersionDir.'/php'.$wampConf['phpVersion'].'/'.$wampConf['phpConfFile']);
-
-if($phpini != strtolower($c_phpConfFile) && $phpini != $c_phpConfFileOri) {
-	$error_content .= "<p style='color:red;'>*** ERROR *** The PHP configuration loaded file is: ".$phpini." - should be: ".$c_phpConfFile." or ".$c_phpConfFileOri;
-	$error_content .= "<br>You must perform: <span style='color:green;'>Right-click icon Wampmanager -> Refresh</span><br>";
-	if($phpini == $c_phpCliConf || $phpini == $c_phpCliConfFile)
-		$error_content .= " - This file is only for PHP in Command Line - Maybe you've added 'PHPIniDir' in the 'httpd.conf' file. Delete or comment this line.";
-	$error_content .= "</p>";
-}
-if($filelist = php_ini_scanned_files()) {
-	if (strlen($filelist) > 0) {
-		$error_content .= "<p style='color:red;'>*** ERROR *** There are too much php.ini files</p>";
-		$files = explode(',', $filelist);
-		foreach ($files as $file) {
-			$error_content .= "<p style='color:red;'>*** ERROR *** There are other php.ini files: ".trim(str_replace("\\","/",$file))."</p>";
-		}
-	}
-}
-
-$pageContents = <<< EOPAGE
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-	<title>{$langues['titreHtml']}</title>
-	<meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width">
-	<link id="stylecall" rel="stylesheet" href="wampthemes/classic/style.css" />
-	<link rel="shortcut icon" href="favicon.ico" type="image/ico" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="Dashboard">
+  <meta name="keyword" content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+  <title>Dashio - Bootstrap Admin Template</title>
+
+  <!-- Favicons -->
+  <link href="img/favicon.png" rel="icon">
+  <link href="img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Bootstrap core CSS -->
+  <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <!--external css-->
+  <link href="lib/font-awesome/css/font-awesome.css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="css/zabuto_calendar.css">
+  <link rel="stylesheet" type="text/css" href="lib/gritter/css/jquery.gritter.css" />
+  <!-- Custom styles for this template -->
+  <link href="css/style.css" rel="stylesheet">
+  <link href="css/style-responsive.css" rel="stylesheet">
+  <script src="lib/chart-master/Chart.js"></script>
+
+  <!-- =======================================================
+    Template Name: Dashio
+    Template URL: https://templatemag.com/dashio-bootstrap-admin-template/
+    Author: TemplateMag.com
+    License: https://templatemag.com/license/
+  ======================================================= -->
 </head>
 
 <body>
-  <div id="head">
-    <div class="innerhead">
-	    <h1><abbr title="Windows">W</abbr><abbr title="Apache">A</abbr><abbr title="MySQL">M</abbr><abbr title="PHP">P</abbr></h1>
-		   <ul>
-		    <li>PHP 5</li>
-			   <li>Apache 2.4</li>
-			   <li>MySQL 5</li>
-		   </ul>
-     </div>
-		<ul class="utility">
-		  <li>Version ${c_wampVersion} - ${c_wampMode}</li>
-      <li>${langueswitcher}${styleswitcher}</li>
-	  </ul>
-	</div>
-
-	<div class="config">
-	    <div class="innerconfig">
-
-	        <h2> {$langues['titreConf']} </h2>
-
-	        <dl class="content">
-		        <dt>{$langues['versa']}</dt>
-		            <dd>${apacheVersion}&nbsp;&nbsp;-&nbsp;<a href='http://{$langues[$doca_version]}'>{$langues['documentation']}</a></dd>
-		        <dt>{$langues['server']}</dt>
-		            <dd>${server_software}&nbsp;-&nbsp;{$langues['portUsed']}{$ListenPorts}</dd>
-		        <dt>{$langues['versp']}</dt>
-		            <dd>${phpVersion}&nbsp;&nbsp;-&nbsp;<a href='http://{$langues['docp']}'>{$langues['documentation']}</a></dd>
-		        <dt>{$langues['phpExt']}</dt>
-		            <dd>
-			            <ul>
-			                ${phpExtContents}
-			            </ul>
-		            </dd>
-						${DBMSTypes}
-	        </dl>
+  <section id="container">
+    <!-- **********************************************************************************************************************************************************
+        TOP BAR CONTENT & NOTIFICATIONS
+        *********************************************************************************************************************************************************** -->
+    <!--header start-->
+    <header class="header black-bg">
+      <div class="sidebar-toggle-box">
+        <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
+      </div>
+      <!--logo start-->
+      <a href="index.php" class="logo"><b>DASH<span>IO</span></b></a>
+      <!--logo end-->
+      <div class="nav notify-row" id="top_menu">
+        <!--  notification start -->
+        <ul class="nav top-menu">
+          <!-- settings start -->
+          <li class="dropdown">
+            <a data-toggle="dropdown" class="dropdown-toggle" href="index.html#">
+              <i class="fa fa-tasks"></i>
+              <span class="badge bg-theme">4</span>
+              </a>
+            <ul class="dropdown-menu extended tasks-bar">
+              <div class="notify-arrow notify-arrow-green"></div>
+              <li>
+                <p class="green">You have 4 pending tasks</p>
+              </li>
+              <li>
+                <a href="index.html#">
+                  <div class="task-info">
+                    <div class="desc">Dashio Admin Panel</div>
+                    <div class="percent">40%</div>
+                  </div>
+                  <div class="progress progress-striped">
+                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
+                      <span class="sr-only">40% Complete (success)</span>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a href="index.html#">
+                  <div class="task-info">
+                    <div class="desc">Database Update</div>
+                    <div class="percent">60%</div>
+                  </div>
+                  <div class="progress progress-striped">
+                    <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
+                      <span class="sr-only">60% Complete (warning)</span>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a href="index.html#">
+                  <div class="task-info">
+                    <div class="desc">Product Development</div>
+                    <div class="percent">80%</div>
+                  </div>
+                  <div class="progress progress-striped">
+                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%">
+                      <span class="sr-only">80% Complete</span>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a href="index.html#">
+                  <div class="task-info">
+                    <div class="desc">Payments Sent</div>
+                    <div class="percent">70%</div>
+                  </div>
+                  <div class="progress progress-striped">
+                    <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width: 70%">
+                      <span class="sr-only">70% Complete (Important)</span>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li class="external">
+                <a href="#">See All Tasks</a>
+              </li>
+            </ul>
+          </li>
+          <!-- settings end -->
+          <!-- inbox dropdown start-->
+          <li id="header_inbox_bar" class="dropdown">
+            <a data-toggle="dropdown" class="dropdown-toggle" href="index.html#">
+              <i class="fa fa-envelope-o"></i>
+              <span class="badge bg-theme">5</span>
+              </a>
+            <ul class="dropdown-menu extended inbox">
+              <div class="notify-arrow notify-arrow-green"></div>
+              <li>
+                <p class="green">You have 5 new messages</p>
+              </li>
+              <li>
+                <a href="index.html#">
+                  <span class="photo"><img alt="avatar" src="img/ui-zac.jpg"></span>
+                  <span class="subject">
+                  <span class="from">Zac Snider</span>
+                  <span class="time">Just now</span>
+                  </span>
+                  <span class="message">
+                  Hi mate, how is everything?
+                  </span>
+                  </a>
+              </li>
+              <li>
+                <a href="index.html#">
+                  <span class="photo"><img alt="avatar" src="img/ui-divya.jpg"></span>
+                  <span class="subject">
+                  <span class="from">Divya Manian</span>
+                  <span class="time">40 mins.</span>
+                  </span>
+                  <span class="message">
+                  Hi, I need your help with this.
+                  </span>
+                  </a>
+              </li>
+              <li>
+                <a href="index.html#">
+                  <span class="photo"><img alt="avatar" src="img/ui-danro.jpg"></span>
+                  <span class="subject">
+                  <span class="from">Dan Rogers</span>
+                  <span class="time">2 hrs.</span>
+                  </span>
+                  <span class="message">
+                  Love your new Dashboard.
+                  </span>
+                  </a>
+              </li>
+              <li>
+                <a href="index.html#">
+                  <span class="photo"><img alt="avatar" src="img/ui-sherman.jpg"></span>
+                  <span class="subject">
+                  <span class="from">Dj Sherman</span>
+                  <span class="time">4 hrs.</span>
+                  </span>
+                  <span class="message">
+                  Please, answer asap.
+                  </span>
+                  </a>
+              </li>
+              <li>
+                <a href="index.html#">See all messages</a>
+              </li>
+            </ul>
+          </li>
+          <!-- inbox dropdown end -->
+          <!-- notification dropdown start-->
+          <li id="header_notification_bar" class="dropdown">
+            <a data-toggle="dropdown" class="dropdown-toggle" href="index.html#">
+              <i class="fa fa-bell-o"></i>
+              <span class="badge bg-warning">7</span>
+              </a>
+            <ul class="dropdown-menu extended notification">
+              <div class="notify-arrow notify-arrow-yellow"></div>
+              <li>
+                <p class="yellow">You have 7 new notifications</p>
+              </li>
+              <li>
+                <a href="index.html#">
+                  <span class="label label-danger"><i class="fa fa-bolt"></i></span>
+                  Server Overloaded.
+                  <span class="small italic">4 mins.</span>
+                  </a>
+              </li>
+              <li>
+                <a href="index.html#">
+                  <span class="label label-warning"><i class="fa fa-bell"></i></span>
+                  Memory #2 Not Responding.
+                  <span class="small italic">30 mins.</span>
+                  </a>
+              </li>
+              <li>
+                <a href="index.html#">
+                  <span class="label label-danger"><i class="fa fa-bolt"></i></span>
+                  Disk Space Reached 85%.
+                  <span class="small italic">2 hrs.</span>
+                  </a>
+              </li>
+              <li>
+                <a href="index.html#">
+                  <span class="label label-success"><i class="fa fa-plus"></i></span>
+                  New User Registered.
+                  <span class="small italic">3 hrs.</span>
+                  </a>
+              </li>
+              <li>
+                <a href="index.html#">See all notifications</a>
+              </li>
+            </ul>
+          </li>
+          <!-- notification dropdown end -->
+        </ul>
+        <!--  notification end -->
+      </div>
+      <div class="top-menu">
+        <ul class="nav pull-right top-menu">
+          <li><a class="logout" href="login.html">Logout</a></li>
+        </ul>
+      </div>
+    </header>
+    <!--header end-->
+    <!-- **********************************************************************************************************************************************************
+        MAIN SIDEBAR MENU
+        *********************************************************************************************************************************************************** -->
+    <!--sidebar start-->
+    <aside>
+      <div id="sidebar" class="nav-collapse ">
+        <!-- sidebar menu start-->
+        <ul class="sidebar-menu" id="nav-accordion">
+          <p class="centered"><a href="profile.html"><img src="img/ui-sam.jpg" class="img-circle" width="80"></a></p>
+          <h5 class="centered">Sam Soffes</h5>
+          <li class="mt">
+            <a class="active" href="index.html">
+              <i class="fa fa-dashboard"></i>
+              <span>Dashboard</span>
+              </a>
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:;">
+              <i class="fa fa-desktop"></i>
+              <span>Gestion admininstrateur</span>
+              </a>
+            <ul class="sub">
+              <li><a href="formulaireajout.php">ajouter administrateur</a></li>
+              <li><a href="formulairemodif.php">modifier administrateur</a></li>
+              <li><a href="formulairesupp.php">supprimer administrateur</a></li>
+              <li><a href="formulaireafficher.php">afficher administrateur</a></li>
+             
+              
+            </ul>
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:;">
+              <i class="fa fa-desktop"></i>
+              <span>Gestion des clients</span>
+              </a>
+            <ul class="sub">
+                        <li><a href="Desactivercompte.php">Desactiver un compte</a></li>
+                        <li><a  href="Reactivercompte.php">Reactiver Un compte</a></li>
+                        <li><a class="active" href="afficher liste client.php">Liste Des Clients</a></li>
+                        <li><a  href="recherchercompte.php">rechercher Un compte</a></li>
+                        <li><a  href="afficher liste client trier.php">affichage trier</a></li>
+            </ul>
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:;">
+              <i class="fa fa-cogs"></i>
+              <span>Components</span>
+              </a>
+            <ul class="sub">
+              <li><a href="grids.html">Grids</a></li>
+              <li><a href="calendar.html">Calendar</a></li>
+              <li><a href="gallery.html">Gallery</a></li>
+              <li><a href="todo_list.html">Todo List</a></li>
+              <li><a href="dropzone.html">Dropzone File Upload</a></li>
+              <li><a href="inline_editor.html">Inline Editor</a></li>
+              <li><a href="file_upload.html">Multiple File Upload</a></li>
+            </ul>
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:;">
+              <i class="fa fa-book"></i>
+              <span>Extra Pages</span>
+              </a>
+            <ul class="sub">
+              <li><a href="blank.html">Blank Page</a></li>
+              <li><a href="login.html">Login</a></li>
+              <li><a href="lock_screen.html">Lock Screen</a></li>
+              <li><a href="profile.html">Profile</a></li>
+              <li><a href="invoice.html">Invoice</a></li>
+              <li><a href="pricing_table.html">Pricing Table</a></li>
+              <li><a href="faq.html">FAQ</a></li>
+              <li><a href="404.html">404 Error</a></li>
+              <li><a href="500.html">500 Error</a></li>
+            </ul>
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:;">
+              <i class="fa fa-tasks"></i>
+              <span>Forms</span>
+              </a>
+            <ul class="sub">
+              <li><a href="form_component.html">Form Components</a></li>
+              <li><a href="advanced_form_components.html">Advanced Components</a></li>
+              <li><a href="form_validation.html">Form Validation</a></li>
+              <li><a href="contactform.html">Contact Form</a></li>
+            </ul>
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:;">
+              <i class="fa fa-th"></i>
+              <span>Data Tables</span>
+              </a>
+            <ul class="sub">
+              <li><a href="basic_table.html">Basic Table</a></li>
+              <li><a href="responsive_table.html">Responsive Table</a></li>
+              <li><a href="advanced_table.html">Advanced Table</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="inbox.html">
+              <i class="fa fa-envelope"></i>
+              <span>Mail </span>
+              <span class="label label-theme pull-right mail-info">2</span>
+              </a>
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:;">
+              <i class=" fa fa-bar-chart-o"></i>
+              <span>Charts</span>
+              </a>
+            <ul class="sub">
+              <li><a href="morris.html">Morris</a></li>
+              <li><a href="chartjs.html">Chartjs</a></li>
+              <li><a href="flot_chart.html">Flot Charts</a></li>
+              <li><a href="xchart.html">xChart</a></li>
+            </ul>
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:;">
+              <i class="fa fa-comments-o"></i>
+              <span>Chat Room</span>
+              </a>
+            <ul class="sub">
+              <li><a href="lobby.html">Lobby</a></li>
+              <li><a href="chat_room.html"> Chat Room</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="google_maps.html">
+              <i class="fa fa-map-marker"></i>
+              <span>Google Maps </span>
+              </a>
+          </li>
+        </ul>
+        <!-- sidebar menu end-->
+      </div>
+    </aside>
+    <!--sidebar end-->
+    <!-- **********************************************************************************************************************************************************
+        MAIN CONTENT
+        *********************************************************************************************************************************************************** -->
+    <!--main content start-->
+    <section id="main-content">
+      <section class="wrapper">
+        <div class="row">
+          <div class="col-lg-9 main-chart">
+            <!--CUSTOM CHART START -->
+            <div class="border-head">
+              <h3>USER VISITS</h3>
+            </div>
+            <div class="custom-bar-chart">
+              <ul class="y-axis">
+                <li><span>10.000</span></li>
+                <li><span>8.000</span></li>
+                <li><span>6.000</span></li>
+                <li><span>4.000</span></li>
+                <li><span>2.000</span></li>
+                <li><span>0</span></li>
+              </ul>
+              <div class="bar">
+                <div class="title">JAN</div>
+                <div class="value tooltips" data-original-title="8.500" data-toggle="tooltip" data-placement="top">85%</div>
+              </div>
+              <div class="bar ">
+                <div class="title">FEB</div>
+                <div class="value tooltips" data-original-title="5.000" data-toggle="tooltip" data-placement="top">50%</div>
+              </div>
+              <div class="bar ">
+                <div class="title">MAR</div>
+                <div class="value tooltips" data-original-title="6.000" data-toggle="tooltip" data-placement="top">60%</div>
+              </div>
+              <div class="bar ">
+                <div class="title">APR</div>
+                <div class="value tooltips" data-original-title="4.500" data-toggle="tooltip" data-placement="top">45%</div>
+              </div>
+              <div class="bar">
+                <div class="title">MAY</div>
+                <div class="value tooltips" data-original-title="3.200" data-toggle="tooltip" data-placement="top">32%</div>
+              </div>
+              <div class="bar ">
+                <div class="title">JUN</div>
+                <div class="value tooltips" data-original-title="6.200" data-toggle="tooltip" data-placement="top">62%</div>
+              </div>
+              <div class="bar">
+                <div class="title">JUL</div>
+                <div class="value tooltips" data-original-title="7.500" data-toggle="tooltip" data-placement="top">75%</div>
+              </div>
+            </div>
+            <!--custom chart end-->
+            <div class="row mt">
+              <!-- SERVER STATUS PANELS -->
+              <div class="col-md-4 col-sm-4 mb">
+                <div class="grey-panel pn donut-chart">
+                  <div class="grey-header">
+                    <h5>SERVER LOAD</h5>
+                  </div>
+                  <canvas id="serverstatus01" height="120" width="120"></canvas>
+                  <script>
+                    var doughnutData = [{
+                        value: 70,
+                        color: "#FF6B6B"
+                      },
+                      {
+                        value: 30,
+                        color: "#fdfdfd"
+                      }
+                    ];
+                    var myDoughnut = new Chart(document.getElementById("serverstatus01").getContext("2d")).Doughnut(doughnutData);
+                  </script>
+                  <div class="row">
+                    <div class="col-sm-6 col-xs-6 goleft">
+                      <p>Usage<br/>Increase:</p>
+                    </div>
+                    <div class="col-sm-6 col-xs-6">
+                      <h2>21%</h2>
+                    </div>
+                  </div>
+                </div>
+                <!-- /grey-panel -->
+              </div>
+              <!-- /col-md-4-->
+              <div class="col-md-4 col-sm-4 mb">
+                <div class="darkblue-panel pn">
+                  <div class="darkblue-header">
+                    <h5>DROPBOX STATICS</h5>
+                  </div>
+                  <canvas id="serverstatus02" height="120" width="120"></canvas>
+                  <script>
+                    var doughnutData = [{
+                        value: 60,
+                        color: "#1c9ca7"
+                      },
+                      {
+                        value: 40,
+                        color: "#f68275"
+                      }
+                    ];
+                    var myDoughnut = new Chart(document.getElementById("serverstatus02").getContext("2d")).Doughnut(doughnutData);
+                  </script>
+                  <p>April 17, 2014</p>
+                  <footer>
+                    <div class="pull-left">
+                      <h5><i class="fa fa-hdd-o"></i> 17 GB</h5>
+                    </div>
+                    <div class="pull-right">
+                      <h5>60% Used</h5>
+                    </div>
+                  </footer>
+                </div>
+                <!--  /darkblue panel -->
+              </div>
+              <!-- /col-md-4 -->
+              <div class="col-md-4 col-sm-4 mb">
+                <!-- REVENUE PANEL -->
+                <div class="green-panel pn">
+                  <div class="green-header">
+                    <h5>REVENUE</h5>
+                  </div>
+                  <div class="chart mt">
+                    <div class="sparkline" data-type="line" data-resize="true" data-height="75" data-width="90%" data-line-width="1" data-line-color="#fff" data-spot-color="#fff" data-fill-color="" data-highlight-line-color="#fff" data-spot-radius="4" data-data="[200,135,667,333,526,996,564,123,890,464,655]"></div>
+                  </div>
+                  <p class="mt"><b>$ 17,980</b><br/>Month Income</p>
+                </div>
+              </div>
+              <!-- /col-md-4 -->
+            </div>
+            <!-- /row -->
+            <div class="row">
+              <!-- WEATHER PANEL -->
+              <div class="col-md-4 mb">
+                <div class="weather pn">
+                  <i class="fa fa-cloud fa-4x"></i>
+                  <h2>11º C</h2>
+                  <h4>BUDAPEST</h4>
+                </div>
+              </div>
+              <!-- /col-md-4-->
+              <!-- DIRECT MESSAGE PANEL -->
+              <div class="col-md-8 mb">
+                <div class="message-p pn">
+                  <div class="message-header">
+                    <h5>DIRECT MESSAGE</h5>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-3 centered hidden-sm hidden-xs">
+                      <img src="img/ui-danro.jpg" class="img-circle" width="65">
+                    </div>
+                    <div class="col-md-9">
+                      <p>
+                        <name>Dan Rogers</name>
+                        sent you a message.
+                      </p>
+                      <p class="small">3 hours ago</p>
+                      <p class="message">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <form class="form-inline" role="form">
+                        <div class="form-group">
+                          <input type="text" class="form-control" id="exampleInputText" placeholder="Reply Dan">
+                        </div>
+                        <button type="submit" class="btn btn-default">Send</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                <!-- /Message Panel-->
+              </div>
+              <!-- /col-md-8  -->
+            </div>
+            <div class="row">
+              <!-- TWITTER PANEL -->
+              <div class="col-md-4 mb">
+                <div class="twitter-panel pn">
+                  <i class="fa fa-twitter fa-4x"></i>
+                  <p>Dashio is here! Take a look and enjoy this new Bootstrap Dashboard theme.</p>
+                  <p class="user">@Alvrz_is</p>
+                </div>
+              </div>
+              <!-- /col-md-4 -->
+              <div class="col-md-4 mb">
+                <!-- WHITE PANEL - TOP USER -->
+                <div class="white-panel pn">
+                  <div class="white-header">
+                    <h5>TOP USER</h5>
+                  </div>
+                  <p><img src="img/ui-zac.jpg" class="img-circle" width="50"></p>
+                  <p><b>Zac Snider</b></p>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <p class="small mt">MEMBER SINCE</p>
+                      <p>2012</p>
+                    </div>
+                    <div class="col-md-6">
+                      <p class="small mt">TOTAL SPEND</p>
+                      <p>$ 47,60</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- /col-md-4 -->
+              <div class="col-md-4 mb">
+                <!-- INSTAGRAM PANEL -->
+                <div class="instagram-panel pn">
+                  <i class="fa fa-instagram fa-4x"></i>
+                  <p>@THISISYOU<br/> 5 min. ago
+                  </p>
+                  <p><i class="fa fa-comment"></i> 18 | <i class="fa fa-heart"></i> 49</p>
+                </div>
+              </div>
+              <!-- /col-md-4 -->
+            </div>
+            <!-- /row -->
+            <div class="row">
+              <div class="col-lg-4 col-md-4 col-sm-4 mb">
+                <div class="product-panel-2 pn">
+                  <div class="badge badge-hot">HOT</div>
+                  <img src="img/product.jpg" width="200" alt="">
+                  <h5 class="mt">Flat Pack Heritage</h5>
+                  <h6>TOTAL SALES: 1388</h6>
+                  <button class="btn btn-small btn-theme04">FULL REPORT</button>
+                </div>
+              </div>
+              <!-- /col-md-4 -->
+              <!--  PROFILE 02 PANEL -->
+              <div class="col-lg-4 col-md-4 col-sm-4 mb">
+                <div class="content-panel pn">
+                  <div id="profile-02">
+                    <div class="user">
+                      <img src="img/friends/fr-06.jpg" class="img-circle" width="80">
+                      <h4>DJ SHERMAN</h4>
+                    </div>
+                  </div>
+                  <div class="pr2-social centered">
+                    <a href="#"><i class="fa fa-twitter"></i></a>
+                    <a href="#"><i class="fa fa-facebook"></i></a>
+                    <a href="#"><i class="fa fa-dribbble"></i></a>
+                  </div>
+                </div>
+                <!-- /panel -->
+              </div>
+              <!--/ col-md-4 -->
+              <div class="col-md-4 col-sm-4 mb">
+                <div class="green-panel pn">
+                  <div class="green-header">
+                    <h5>DISK SPACE</h5>
+                  </div>
+                  <canvas id="serverstatus03" height="120" width="120"></canvas>
+                  <script>
+                    var doughnutData = [{
+                        value: 60,
+                        color: "#2b2b2b"
+                      },
+                      {
+                        value: 40,
+                        color: "#fffffd"
+                      }
+                    ];
+                    var myDoughnut = new Chart(document.getElementById("serverstatus03").getContext("2d")).Doughnut(doughnutData);
+                  </script>
+                  <h3>60% USED</h3>
+                </div>
+              </div>
+              <!-- /col-md-4 -->
+            </div>
+            <!-- /row -->
+          </div>
+          <!-- /col-lg-9 END SECTION MIDDLE -->
+          <!-- **********************************************************************************************************************************************************
+              RIGHT SIDEBAR CONTENT
+              *********************************************************************************************************************************************************** -->
+          <div class="col-lg-3 ds">
+            <!--COMPLETED ACTIONS DONUTS CHART-->
+            <div class="donut-main">
+              <h4>COMPLETED ACTIONS & PROGRESS</h4>
+              <canvas id="newchart" height="130" width="130"></canvas>
+              <script>
+                var doughnutData = [{
+                    value: 70,
+                    color: "#4ECDC4"
+                  },
+                  {
+                    value: 30,
+                    color: "#fdfdfd"
+                  }
+                ];
+                var myDoughnut = new Chart(document.getElementById("newchart").getContext("2d")).Doughnut(doughnutData);
+              </script>
+            </div>
+            <!--NEW EARNING STATS -->
+            <div class="panel terques-chart">
+              <div class="panel-body">
+                <div class="chart">
+                  <div class="centered">
+                    <span>TODAY EARNINGS</span>
+                    <strong>$ 890,00 | 15%</strong>
+                  </div>
+                  <br>
+                  <div class="sparkline" data-type="line" data-resize="true" data-height="75" data-width="90%" data-line-width="1" data-line-color="#fff" data-spot-color="#fff" data-fill-color="" data-highlight-line-color="#fff" data-spot-radius="4" data-data="[200,135,667,333,526,996,564,123,890,564,455]"></div>
+                </div>
+              </div>
+            </div>
+            <!--new earning end-->
+            <!-- RECENT ACTIVITIES SECTION -->
+            <h4 class="centered mt">RECENT ACTIVITY</h4>
+            <!-- First Activity -->
+            <div class="desc">
+              <div class="thumb">
+                <span class="badge bg-theme"><i class="fa fa-clock-o"></i></span>
+              </div>
+              <div class="details">
+                <p>
+                  <muted>Just Now</muted>
+                  <br/>
+                  <a href="#">Paul Rudd</a> purchased an item.<br/>
+                </p>
+              </div>
+            </div>
+            <!-- Second Activity -->
+            <div class="desc">
+              <div class="thumb">
+                <span class="badge bg-theme"><i class="fa fa-clock-o"></i></span>
+              </div>
+              <div class="details">
+                <p>
+                  <muted>2 Minutes Ago</muted>
+                  <br/>
+                  <a href="#">James Brown</a> subscribed to your newsletter.<br/>
+                </p>
+              </div>
+            </div>
+            <!-- Third Activity -->
+            <div class="desc">
+              <div class="thumb">
+                <span class="badge bg-theme"><i class="fa fa-clock-o"></i></span>
+              </div>
+              <div class="details">
+                <p>
+                  <muted>3 Hours Ago</muted>
+                  <br/>
+                  <a href="#">Diana Kennedy</a> purchased a year subscription.<br/>
+                </p>
+              </div>
+            </div>
+            <!-- Fourth Activity -->
+            <div class="desc">
+              <div class="thumb">
+                <span class="badge bg-theme"><i class="fa fa-clock-o"></i></span>
+              </div>
+              <div class="details">
+                <p>
+                  <muted>7 Hours Ago</muted>
+                  <br/>
+                  <a href="#">Brando Page</a> purchased a year subscription.<br/>
+                </p>
+              </div>
+            </div>
+            <!-- USERS ONLINE SECTION -->
+            <h4 class="centered mt">TEAM MEMBERS ONLINE</h4>
+            <!-- First Member -->
+            <div class="desc">
+              <div class="thumb">
+                <img class="img-circle" src="img/ui-divya.jpg" width="35px" height="35px" align="">
+              </div>
+              <div class="details">
+                <p>
+                  <a href="#">DIVYA MANIAN</a><br/>
+                  <muted>Available</muted>
+                </p>
+              </div>
+            </div>
+            <!-- Second Member -->
+            <div class="desc">
+              <div class="thumb">
+                <img class="img-circle" src="img/ui-sherman.jpg" width="35px" height="35px" align="">
+              </div>
+              <div class="details">
+                <p>
+                  <a href="#">DJ SHERMAN</a><br/>
+                  <muted>I am Busy</muted>
+                </p>
+              </div>
+            </div>
+            <!-- Third Member -->
+            <div class="desc">
+              <div class="thumb">
+                <img class="img-circle" src="img/ui-danro.jpg" width="35px" height="35px" align="">
+              </div>
+              <div class="details">
+                <p>
+                  <a href="#">DAN ROGERS</a><br/>
+                  <muted>Available</muted>
+                </p>
+              </div>
+            </div>
+            <!-- Fourth Member -->
+            <div class="desc">
+              <div class="thumb">
+                <img class="img-circle" src="img/ui-zac.jpg" width="35px" height="35px" align="">
+              </div>
+              <div class="details">
+                <p>
+                  <a href="#">Zac Sniders</a><br/>
+                  <muted>Available</muted>
+                </p>
+              </div>
+            </div>
+            <!-- CALENDAR-->
+            <div id="calendar" class="mb">
+              <div class="panel green-panel no-margin">
+                <div class="panel-body">
+                  <div id="date-popover" class="popover top" style="cursor: pointer; disadding: block; margin-left: 33%; margin-top: -50px; width: 175px;">
+                    <div class="arrow"></div>
+                    <h3 class="popover-title" style="disadding: none;"></h3>
+                    <div id="date-popover-content" class="popover-content"></div>
+                  </div>
+                  <div id="my-calendar"></div>
+                </div>
+              </div>
+            </div>
+            <!-- / calendar -->
+          </div>
+          <!-- /col-lg-3 -->
         </div>
-    </div>
-
-    <div class="divider1">&nbsp;</div>
-
-    <div class="alltools ${allToolsClass}">
-	    <div class="inneralltools">
-	        <div class="column">
-	            <h2>{$langues['titrePage']}</h2>
-	            <ul class="tools">
-		            <li><a href="?phpinfo=-1">phpinfo()</a></li>
-		            {$phpmyadminTool}
-		            {$addVhost}
-	            </ul>
-	        </div>
-	        		<div class="column">
-	            <h2>{$langues['txtProjet']}</h2>
-	            <ul class="projects">
-	                ${projectContents}
-	            </ul>
-	        </div>
-	        	<div class="column">
-	            <h2>{$langues['txtAlias']}</h2>
-	            <ul class="aliases">
-	                ${aliasContents}
-	            </ul>
-	        </div>
-EOPAGE;
-if($VirtualHostMenu == "on") {
-$pageContents .= <<< EOPAGEA
-	        <div class="column">
-	            <h2>{$langues['txtVhost']}</h2>
-	            <ul class="vhost">
-	                ${vhostsContents}
-	            </ul>
-	        </div>
-EOPAGEA;
-}
-if(!empty($error_content)) {
-$pageContents .= <<< EOPAGEB
-	<div id="error" style="clear:both;"></div>
-	${error_content}
-EOPAGEB;
-}
-$pageContents .= <<< EOPAGEC
+        <!-- /row -->
+      </section>
+    </section>
+    <!--main content end-->
+    <!--footer start-->
+    <footer class="site-footer">
+      <div class="text-center">
+        <p>
+          &copy; Copyrights <strong>Dashio</strong>. All Rights Reserved
+        </p>
+        <div class="credits">
+          <!--
+            You are NOT allowed to delete the credit link to TemplateMag with free version.
+            You can delete the credit link only if you bought the pro version.
+            Buy the pro version with working PHP/AJAX contact form: https://templatemag.com/dashio-bootstrap-admin-template/
+            Licensing information: https://templatemag.com/license/
+          -->
+          Created with Dashio template by <a href="https://templatemag.com/">TemplateMag</a>
         </div>
-    </div>
+        <a href="index.html#" class="go-top">
+          <i class="fa fa-angle-up"></i>
+          </a>
+      </div>
+    </footer>
+    <!--footer end-->
+  </section>
+  <!-- js placed at the end of the document so the pages load faster -->
+  <script src="lib/jquery/jquery.min.js"></script>
 
-	<div class="divider2">&nbsp;</div>
+  <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+  <script class="include" type="text/javascript" src="lib/jquery.dcjqaccordion.2.7.js"></script>
+  <script src="lib/jquery.scrollTo.min.js"></script>
+  <script src="lib/jquery.nicescroll.js" type="text/javascript"></script>
+  <script src="lib/jquery.sparkline.js"></script>
+  <!--common script for all pages-->
+  <script src="lib/common-scripts.js"></script>
+  <script type="text/javascript" src="lib/gritter/js/jquery.gritter.js"></script>
+  <script type="text/javascript" src="lib/gritter-conf.js"></script>
+  <!--script for this page-->
+  <script src="lib/sparkline-chart.js"></script>
+  <script src="lib/zabuto_calendar.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      var unique_id = $.gritter.add({
+        // (string | mandatory) the heading of the notification
+        title: 'Welcome to Dashio!',
+        // (string | mandatory) the text inside the notification
+        text: 'Hover me to enable the Close Button. You can hide the left sidebar clicking on the button next to the logo.',
+        // (string | optional) the image to display on the left
+        image: 'img/ui-sam.jpg',
+        // (bool | optional) if you want it to fade out on its own or just sit there
+        sticky: false,
+        // (int | optional) the time you want it to be alive for before fading out
+        time: 8000,
+        // (string | optional) the class name you want to apply to that specific message
+        class_name: 'my-sticky-class'
+      });
 
-	<ul id="foot">
-		<li><a href="{$langues['forumLink']}">{$langues['forum']}</a></li>
-	</ul>
+      return false;
+    });
+  </script>
+  <script type="application/javascript">
+    $(document).ready(function() {
+      $("#date-popover").popover({
+        html: true,
+        trigger: "manual"
+      });
+      $("#date-popover").hide();
+      $("#date-popover").click(function(e) {
+        $(this).hide();
+      });
 
-<script>
-var select = document.getElementById("themes");
-if (select.addEventListener) {
-    /* Only for modern browser and IE > 9 */
-    var stylecall = document.getElementById("stylecall");
-    /* looking for stored style name */
-    var wampStyle = localStorage.getItem("wampStyle");
-    if (wampStyle !== null) {
-        stylecall.setAttribute("href", "wampthemes/" + wampStyle + "/style.css");
-        selectedOption = document.getElementById(wampStyle);
-        selectedOption.setAttribute("selected", "selected");
+      $("#my-calendar").zabuto_calendar({
+        action: function() {
+          return myDateFunction(this.id, false);
+        },
+        action_nav: function() {
+          return myNavFunction(this.id);
+        },
+        ajax: {
+          url: "show_data.php?action=1",
+          modal: true
+        },
+        legend: [{
+            type: "text",
+            label: "Special event",
+            badge: "00"
+          },
+          {
+            type: "block",
+            label: "Regular event",
+          }
+        ]
+      });
+    });
+
+    function myNavFunction(id) {
+      $("#date-popover").hide();
+      var nav = $("#" + id).data("navigation");
+      var to = $("#" + id).data("to");
+      console.log('nav ' + nav + ' to: ' + to.month + '/' + to.year);
     }
-    else {
-        localStorage.setItem("wampStyle","classic");
-        selectedOption = document.getElementById("classic");
-        selectedOption.setAttribute("selected", "selected");
-    }
-    /* Changing style when select change */
-
-    select.addEventListener("change", function(){
-        var styleName = this.value;
-        stylecall.setAttribute("href", "wampthemes/" + styleName + "/style.css");
-        localStorage.setItem("wampStyle", styleName);
-    })
-}
-</script>
+  </script>
 </body>
+
 </html>
-EOPAGEC;
-
-echo $pageContents;
-
-?>
