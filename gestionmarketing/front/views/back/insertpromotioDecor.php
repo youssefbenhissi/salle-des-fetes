@@ -1,0 +1,104 @@
+<?php
+require_once "../../entities/PromotionDecor.php";
+require_once "../../core/PromotionAnimationC.php";
+require_once "../../core/PromotionDecorC.php";
+require_once "../../core/PromotionGastroC.php";
+require_once "../../core/PackC.php";
+require_once "../connexion.php";
+$c = new connexion();
+$conn = $c->cnx;
+$crud = new PromotionDecorC();
+$decors = $crud->afficherTousDecor($conn);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (is_uploaded_file($_FILES['image']["tmp_name"])) {
+        $temp = explode(".", $_FILES["image"]["name"]);
+        $newfilename = round(microtime(true)) . '.' . end($temp);
+        move_uploaded_file($_FILES["image"]["tmp_name"], '../../'.$newfilename);
+    }
+    $date_debut = $_POST['date_debut'];
+    $date_fin = $_POST['date_fin'];
+    $decor = $_POST['decor'];
+    $value = $_POST['value'];
+    $promotionA = new PromotionDecor($decor, $value, $date_debut, $date_fin, $newfilename);
+    $crud = new PromotionDecorC();
+    $crud->ajoutPromotion($promotionA, $conn);
+    header("Location: showAllPromotionDecorAdmin.php");
+    exit;
+}
+?>
+
+<?php include_once 'header.php'  ?>
+<h3><i class="fa fa-angle-right"></i>Ajouter Promotion pour le Decor </h3>
+<div class="row mt">
+    <div class="col-lg-12">
+        <div class="form-panel">
+            <form id="main" class="form-horizontal"  method="post"  enctype="multipart/form-data" novalidate="">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="decor">Decors</label>
+                    <div class="input-group col-sm-5">
+                        <select id="decor" class="form-control" name="decor">
+                            <option value=""></option>
+                            <?php foreach ($decors as $a){ ?>
+                                <option value="<?php echo $a['id']?>"><?php echo $a['nom']?></option>
+                             <?php } ?>
+                        </select>
+                    </div>
+                    <div class="col-sm-5 messages"></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="date_debut">Date Debut</label>
+                    <div class='input-group col-sm-5 date' id='date_debut'>
+                        <input type='text' name="date_debut" class="form-control" />
+                        <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                    </div>
+                    <div class="col-sm-5 messages"></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="date_fin">Date Fin</label>
+                    <div class='input-group col-sm-5 date' id='date_fin'>
+                        <input type='text' name="date_fin" class="form-control" />
+                        <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                    </div>
+                    <div class="col-sm-5 messages"></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="value">Value</label>
+                    <div class="col-sm-5 input-group">
+                        <input id="value" class="form-control" type="number" placeholder="Value" name="value">
+                    </div>
+                    <div class="col-sm-5 messages"></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2">Image Upload</label>
+                    <div class="col-sm-5 input-group">
+                        <div class="fileupload fileupload-new" data-provides="fileupload">
+                            <div class="fileupload-new thumbnail" style="width: 200px; height: 150px;">
+                                <img src="http://www.placehold.it/200x150/EFEFEF/AAAAAA&text=no+image" alt="" />
+                            </div>
+                            <div class="fileupload-preview fileupload-exists thumbnail" style="max-width: 200px; max-height: 150px; line-height: 20px;"></div>
+                            <div>
+                        <span class="btn btn-theme02 btn-file">
+                          <span class="fileupload-new"><i class="fa fa-paperclip"></i> Select image</span>
+                        <span class="fileupload-exists"><i class="fa fa-undo"></i> Change</span>
+                        <input type="file" name="image" class="default" />
+                        </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-md-5">
+                        <button type="submit" class="btn btn-block">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- /form-panel -->
+    </div>
+    <!-- /col-lg-12 -->
+</div>
+<?php include_once  'footer.php'?>
