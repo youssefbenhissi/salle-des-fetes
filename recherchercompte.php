@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -251,7 +253,7 @@
               </a>
           </li>
           <li class="sub-menu">
-            <a class="active" href="javascript:;">
+            <a  href="javascript:;">
               <i class="fa fa-desktop"></i>
               <span>Gestion administrateur</span>
               </a>
@@ -259,20 +261,22 @@
               
            <li><a href="formulaireajout.php">ajouter administrateur</a></li>
               <li><a href="formulairemodif.php">modifier administrateur</a></li>
-              <li><a class="active" href="formulairesupp.php">supprimer administrateur</a></li>
+              <li><a  href="formulairesupp.php">supprimer administrateur</a></li>
               <li><a href="formulaireafficher.php">afficher administrateur</a></li>
               
             </ul>
           </li>
            <li class="sub-menu">
-            <a href="javascript:;">
+            <a class="active" href="javascript:;">
               <i class="fa fa-desktop"></i>
               <span>Gestion des clients</span>
               </a>
             <ul class="sub">
-                        <li><a href="Desactivercompte.php">Desactiver un compte</a></li>
-                        <li><a  href="afficher liste client.php">Liste Des Clients</a></li>
+                       <li><a href="Desactivercompte.php">Desactiver un compte</a></li>
                         <li><a  href="Reactivercompte.php">Reactiver Un compte</a></li>
+                        <li><a  href="afficher liste client.php">Liste Des Clients</a></li>
+                        <li><a class="active" href="recherchercompte.php">rechercher Un compte</a></li>
+                        <li><a  href="afficher liste client trier.php">affichage trier</a></li>
             </ul>
           </li>
           <li class="sub-menu">
@@ -380,34 +384,68 @@
           <div class="col-lg-6 col-md-6 col-sm-12">
            
 <strong class="card-title">Table de recherche</strong>
-                            </div>
-                            <div class="card-body">
-                                <table id="bootstrap-data-table" class="table table-striped table-bordered">
-                                    <thead>
-                                        <tr> 
+<form method="POST">
+    <div class="controls">
+    <input class="controle" type="search" name="cin"   placeholder="saisir le nom du produit">
+    </div>
+      <?php
 
-                                           <th>cin</th>
-                                            <th>Nom</th>
+include "config.php";
+include "entities/client.php";
 
-                                            <th>prenom</th>
-                                            <th>Adresse Email</th>
-                                          
-                                             <th>mdp</th>
-                                             <th>Téléphone</th>
-                                            <th>active</th>
-                                        </tr> 
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                     <p style="display: none;" id="affiche">
-                                        <?php
-                                        include "entities/client.php";
-                                        include "core/clientC.php";
-                                        $d = new clientC();
-                                        $d->rechercheclient();
-                                        ?>
-                                    </p>
-                                                                          </tbody>
+$cin= $_POST['cin'];
+        $sql="SELECT * from client where cin like '%$cin%'";
+        $db = config::getConnexion();
+        try{
+            $liste=$db->query($sql);
+        }
+        catch (Exception $e){
+            die('Erreur dans recherche ajax : '.$e->getMessage());
+        }
+
+
+?>
+<div class="card">
+                <div class="card-body">
+                     <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                            <tr>        
+                                <th>ID</th>
+                                <th>Nom </th>
+                                <th>prenom</th>
+                                <th>email</th>
+                                <th>tel</th>
+                            </tr>
+                            <?PHP
+                            foreach($liste as $row){
+                            ?>
+                            </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><?PHP echo $row['cin']; ?></td>
+                                        <td><?PHP echo $row['nom']; ?></td>
+                                        <td><?PHP echo $row['prenom']; ?></td>
+                                        <td><span class="badge badge-primary"><?PHP echo $row['Email']; ?></span></td>
+                                        <td><span class="badge badge-primary"><?PHP echo $row['tel']; ?></span></td>
+                                        <td><a class="btn btn-danger" href="formulairesupp.php?id=<?PHP echo $row['cin']; ?>"> Supprimer</a></td> 
+                                                <td align="center"><a class="btn btn-warning" href="formulairemodif.php?id=<?PHP echo $row['cin']; ?>">
+                                                        Modifier</a></td>
+                                   
+                                              
+                                                       
+                                            </tr>
+                                    </tr>
+                                <?PHP
+                                }
+                                ?>
+
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+                                                                          </tbody></form>
           </div>
           <!-- /col-lg-6 -->
         </div>

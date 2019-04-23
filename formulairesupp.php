@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -40,7 +42,7 @@
         <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
       </div>
       <!--logo start-->
-      <a href="index.php" class="logo"><b>MONA<span>LISA</span></b></a>
+      <a href="index.php" class="logo"><b>DASH<span>IO</span></b></a>
       <!--logo end-->
       <div class="nav notify-row" id="top_menu">
         <!--  notification start -->
@@ -242,8 +244,8 @@
       <div id="sidebar" class="nav-collapse ">
         <!-- sidebar menu start-->
         <ul class="sidebar-menu" id="nav-accordion">
-          <p class="centered"><a href="profile.html"><img src="img/1.jpg" class="img-circle" width="80"></a></p>
-          <h5 class="centered">Rahma</h5>
+          <p class="centered"><a href="profile.html"><img src="img/ui-sam.jpg" class="img-circle" width="80"></a></p>
+          <h5 class="centered">Sam Soffes</h5>
           <li class="mt">
             <a href="index.html">
               <i class="fa fa-dashboard"></i>
@@ -253,27 +255,26 @@
           <li class="sub-menu">
             <a class="active" href="javascript:;">
               <i class="fa fa-desktop"></i>
-              <span>Gestion des chanteurs</span>
+              <span>Gestion administrateur</span>
               </a>
             <ul class="sub">
               
-           <li><a href="formulaireajout.php">ajouter chanteur</a></li>
-              <li><a href="formulairemodif.php">modifier chanteur</a></li>
-              <li><a class="active" href="formulairesupp.php">supprimer chanteur</a></li>
-              <li><a href="formulaireafficher.php">afficher chanteur</a></li>
+           <li><a href="formulaireajout.php">ajouter administrateur</a></li>
+              <li><a href="formulairemodif.php">modifier administrateur</a></li>
+              <li><a class="active" href="formulairesupp.php">supprimer administrateur</a></li>
+              <li><a href="formulaireafficher.php">afficher administrateur</a></li>
               
             </ul>
           </li>
            <li class="sub-menu">
             <a href="javascript:;">
               <i class="fa fa-desktop"></i>
-              <span>Gestion des troupes musicales</span>
+              <span>Gestion des clients</span>
               </a>
             <ul class="sub">
-            <li><a href="formulaireajouttroupe.php">ajouter troupe</a></li>
-                <li><a href="formulairemodiftroupe.php">modifier troupe</a></li>
-                <li><a href="formulairesupptroupe.php">supprimer troupe</a></li>
-                <li><a href="formulaireaffichertroupe.php">afficher troupe</a></li>
+                        <li><a href="Desactivercompte.php">Desactiver un compte</a></li>
+                        <li><a  href="afficher liste client.php">Liste Des Clients</a></li>
+                        <li><a  href="Reactivercompte.php">Reactiver Un compte</a></li>
             </ul>
           </li>
           <li class="sub-menu">
@@ -380,12 +381,12 @@
         <div class="row mt">
           <div class="col-lg-6 col-md-6 col-sm-12">
            
-            <h3>supprimer un chanteur</h3>
-<form method="POST" action="supprimerchanteur.php">
+            <h3>supprimer un administrateur</h3>
+<form method="POST" action="views/supprimeradmin.php">
 <div>
     <label class="control-label">id</label>
     <div class="controls">
-    <input class="controle" type="number" name="id"  placeholder="saisir l'identifiant">
+    <input class="controle" type="number" name="id" required pattern="[0-9]"  placeholder="saisir l'identifiant">
     </div>
     <p>
 </div>

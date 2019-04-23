@@ -1,0 +1,103 @@
+.body
+{
+	border-style: outset;
+	 border-color: rgba(201, 76, 76, 0.3);
+  	border-width: 7px;
+	text-align: center;
+	padding : 20px;
+	width: 20%;
+	display : flex;
+	flex-direction: column;
+	justify-content: flex-center;
+	background-color: #ececec;
+	
+}
+.content
+{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+body
+{
+	background-color: #501C6D;
+	
+	
+}
+.bienvenue
+{
+	background-color: #A901DB;
+	text-align: center;
+	font-weight: bold; 
+	font-size: 20px;
+	color: white;
+	height: 8%;
+	
+}
+.border1
+{
+	background-color: #ececec;
+	border-style: outset;
+	border-width: 7px;
+	border-color: rgba(201, 76, 76, 0.3);
+	padding : 10px;
+	width: 40%;
+	
+	
+}
+
+
+.entete
+{
+	margin-top: -10px;
+}
+.image
+{
+
+	top: 10px;
+	right: 0px;
+	width: 200px;
+	height: 200px
+}
+.button {
+transition-duration: 0.4s;
+border-radius: 8px;
+float: left;
+  border: 1px white;
+  padding: 10px 21px;
+}
+
+.button:hover {
+  background-color: #000000; /* Green */
+  color: white;
+}
+.h1
+{
+	text-decoration: underline;
+	
+}
+.h2
+{
+	 text-align: left;
+}
+input[type=button], input[type=submit], input[type=reset]  {
+  background-color: #ffffffff;
+  border: none;
+  color: black;
+  padding: 16px 32px;
+  text-decoration: none;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+input[type=text],input[type=date],input[type=mail],input[type=password],input[type=controle],input[type=number] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+}
+span {
+    display:block;
+    background: #F9A5A5;
+    padding: 2px 5px;
+    color: #666;
+}
