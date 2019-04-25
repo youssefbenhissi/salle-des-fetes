@@ -1,3 +1,11 @@
+<?php
+include "../../core/TroupeC.php";
+$troupec =new TroupeC();
+//var_dump($_GET['id']+0);
+$list=$troupec->recupererTroupe((int)$_GET['id']);
+//var_dump($list);
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -40,7 +48,7 @@
         <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
       </div>
       <!--logo start-->
-      <a href="index.php" class="logo"><b>MONA<span>LISA</span></b></a>
+      <a href="index.html" class="logo"><b>DASH<span>IO</span></b></a>
       <!--logo end-->
       <div class="nav notify-row" id="top_menu">
         <!--  notification start -->
@@ -242,38 +250,25 @@
       <div id="sidebar" class="nav-collapse ">
         <!-- sidebar menu start-->
         <ul class="sidebar-menu" id="nav-accordion">
-          <p class="centered"><a href="profile.html"><img src="img/1.jpg" class="img-circle" width="80"></a></p>
-          <h5 class="centered">Rahma</h5>
+          <p class="centered"><a href="profile.html"><img src="img/ui-sam.jpg" class="img-circle" width="80"></a></p>
+          <h5 class="centered"> Rahma chhoud</h5>
           <li class="mt">
             <a href="index.html">
               <i class="fa fa-dashboard"></i>
               <span>Dashboard</span>
               </a>
           </li>
-          <li class="sub-menu">
+         
+              <li class="sub-menu">
             <a class="active" href="javascript:;">
               <i class="fa fa-desktop"></i>
-              <span>Gestion des chanteurs</span>
+              <span> Gestion d'animation </span>
               </a>
             <ul class="sub">
-              
-           <li><a href="formulaireajout.php">ajouter chanteur</a></li>
-              <li><a href="formulairemodif.php">modifier chanteur</a></li>
-              <li><a class="active" href="formulairesupp.php">supprimer chanteur</a></li>
+            <li><a href="formulaireajout.php">ajouter chanteur</a></li>
               <li><a href="formulaireafficher.php">afficher chanteur</a></li>
-              
-            </ul>
-          </li>
-           <li class="sub-menu">
-            <a href="javascript:;">
-              <i class="fa fa-desktop"></i>
-              <span>Gestion des troupes musicales</span>
-              </a>
-            <ul class="sub">
-            <li><a href="formulaireajouttroupe.php">ajouter troupe</a></li>
-                <li><a href="formulairemodiftroupe.php">modifier troupe</a></li>
-                <li><a href="formulairesupptroupe.php">supprimer troupe</a></li>
-                <li><a href="formulaireaffichertroupe.php">afficher troupe</a></li>
+              <li><a href="formulaireajouttroupe.php">ajouter troupe</a></li>
+               <li><a class="active" href="formulaireaffichertroupe.php">afficher troupe</a></li>
             </ul>
           </li>
           <li class="sub-menu">
@@ -380,21 +375,54 @@
         <div class="row mt">
           <div class="col-lg-6 col-md-6 col-sm-12">
            
-            <h3>supprimer un chanteur</h3>
-<form method="POST" action="supprimerchanteur.php">
+            <h3>Modifier troupe </h3>
+<form method="POST" name="Modifier" action="modifiertroupe.php?id=<?php echo $list['id']; ?>"  enctype="multipart/form-data">
 <div>
-    <label class="control-label">id</label>
+    <label class="control-label">id du chanteur</label>
     <div class="controls">
-    <input class="controle" type="number" name="id"  placeholder="saisir l'identifiant">
+    <div class="controls">
+    <input class="controle" type="text" value="<?php echo $list['id'];  ?>" name="id" >
     </div>
     <p>
 </div>
-    
+<div>
+    <label class="control-label">Nom du chanteur</label>
+    <div class="controls">
+    <div class="controls">
+    <input class="controle" type="text" value="<?php echo $list['nom'];  ?>" name="nom" required pattern="[a-zA-Z-\.]{3,12}" placeholder="saisir le nom du plat">
+    </div>
+    <p>
+</div>
+
+<div>
+    <label class="control-label">Image</label>
+    <div class="controls">
+    <input name="image" value="<?php echo $list['image'];  ?>" type="file" required>
+    </div>
     <p>
 </div>
 <div>
-<input type="submit" name="supprimer" value="supprimer" class="btn btn-primary">
- <input type="reset" value="Reset" style="background-color:#0c2646;border-color:#0c2646; color:white;">
+    <label class="control-label">type</label>
+    <div class="controls">
+    <select name="type" id="type">
+                         <option value="Folk">Folk </option>
+                         <option value="Occidental">Occidental</option>
+                         <option value="Oriental">Oriental</option>
+                         <option value="Patrimony">Patrimony</option>
+                         <option value="Tarab">Tarab</option>
+                      
+                     </select>
+    </div>
+<div>
+   
+    <p>
+</div>
+<div>
+
+    
+    <p>
+</div>
+<input type="submit" name="Modifier" value="Modifier" >
 
     </form>
           </div>
@@ -418,6 +446,14 @@
   <script src="lib/jquery.nicescroll.js" type="text/javascript"></script>
   <!--common script for all pages-->
   <script src="lib/common-scripts.js"></script>
+<?php
+if(isset($_SESSION["message"])){
+	echo $_SESSION["message"];
+	unset($_SESSION["message"]);
+}
+
+
+?>
 </body>
 
 </html>

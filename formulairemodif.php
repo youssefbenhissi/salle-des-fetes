@@ -1,3 +1,12 @@
+<?php
+include "../../core/chanteurc.php";
+$platc =new chanteurC();
+//var_dump($_GET['id']+0);
+$list=$platc->recupererchanteur((int)$_GET['id']);
+//var_dump($list);
+
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -40,7 +49,7 @@
         <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
       </div>
       <!--logo start-->
-      <a href="index.php" class="logo"><b>DASH<span>IO</span></b></a>
+      <a href="index.html" class="logo"><b>DASH<span>IO</span></b></a>
       <!--logo end-->
       <div class="nav notify-row" id="top_menu">
         <!--  notification start -->
@@ -243,7 +252,7 @@
         <!-- sidebar menu start-->
         <ul class="sidebar-menu" id="nav-accordion">
           <p class="centered"><a href="profile.html"><img src="img/ui-sam.jpg" class="img-circle" width="80"></a></p>
-          <h5 class="centered">Sam Soffes</h5>
+          <h5 class="centered">Rahma chhoud</h5>
           <li class="mt">
             <a href="index.html">
               <i class="fa fa-dashboard"></i>
@@ -253,27 +262,18 @@
           <li class="sub-menu">
             <a class="active" href="javascript:;">
               <i class="fa fa-desktop"></i>
-              <span>Gestion administrateur</span>
+              <span> Gestion d'animation </span>
               </a>
-            <ul class="sub">
-              
-
-              <li><a href="formulaireajout.php">ajouter administrateur</a></li>
-              <li><a class="active" href="formulairemodif.php">modifier administrateur</a></li>
-              <li><a href="formulairesupp.php">supprimer administrateur</a></li>
-              <li><a href="formulaireafficher.php">afficher administrateur</a></li>
-         
-            </ul>
-          </li>
-           <li class="sub-menu">
-            <a href="javascript:;">
+              <li class="sub-menu">
+            <a class="active" href="javascript:;">
               <i class="fa fa-desktop"></i>
-              <span>Gestion des clients</span>
+              <span> Gestion d'animation </span>
               </a>
             <ul class="sub">
-                        <li><a href="Desactivercompte.php">Desactiver un compte</a></li>
-                        <li><a  href="afficher liste client.php">Liste Des Clients</a></li>
-                        <li><a  href="Reactivercompte.php">Reactiver Un compte</a></li>
+            <li><a href="formulaireajout.php">ajouter chanteur</a></li>
+              <li><a href="formulaireafficher.php">afficher chanteur</a></li>
+              <li><a href="formulaireajouttroupe.php">ajouter troupe</a></li>
+               <li><a class="active" href="formulaireaffichertroupe.php">afficher troupe</a></li>
             </ul>
           </li>
           <li class="sub-menu">
@@ -379,65 +379,55 @@
       <section class="wrapper">
         <div class="row mt">
           <div class="col-lg-6 col-md-6 col-sm-12">
-
            
-            <h3>modifier un administrateur</h3>
-<form method="POST" action="views/modifieradmin.php">
+            <h3>Modifier un chanteur </h3>
+<form method="POST" name="Modifier" action="modifierchanteur.php?id=<?php echo $list['id']; ?>"  enctype="multipart/form-data">
 <div>
-    <label class="control-label">id</label>
+    <label class="control-label">id du chanteur</label>
     <div class="controls">
-    <input class="controle" type="number" name="id"  placeholder="saisir le nom du produit">
+    <div class="controls">
+    <input class="controle" type="text" value="<?php echo $list['id'];  ?>" name="id" >
     </div>
     <p>
 </div>
 <div>
-    <label class="control-label">nom</label>
+    <label class="control-label">Nom du chanteur</label>
     <div class="controls">
-    <input class="controle" type="text" name="nom"  placeholder="saisir le nom du produit">
-    </div>
-    <p>
-</div>
-<div>
-    <label class="control-label">prenom</label>
     <div class="controls">
-    <input class="controle" type="text" name="prenom"  placeholder="saisir le nom du produit">
-    </div>
-    <p>
-</div>
-<div>
-    <label class="control-label">login</label>
-    <div class="controls">
-    <input class="controle" type="text" name="login"  placeholder="saisir le nom du produit">
-    </div>
-    <p>
-</div>
-<div>
-    <label class="control-label">mot de passe</label>
-    <div class="controls">
-    <input class="controle" type="password" name="mdp"  placeholder="saisir le nom du produit">
+    <input class="controle" type="text" value="<?php echo $list['nom'];  ?>" name="nom" required pattern="[a-zA-Z-\.]{3,12}" placeholder="saisir le nom du chanteur">
     </div>
     <p>
 </div>
 
-
 <div>
-     <p>
-       <label for="pays" value="tache">tache</label><br />
-       <select name="tache" >
-           <option value="panier">gestion du panier </option>
-           <option value="marketing">gestion du marketing</option>
-           <option value="reclamation">gestion des reclamation</option>
-           <option value="animation">gestion de l'animation</option>
-          <option value="gastronomie">gestion de la gastronomie</option>
-          <option value="decoration">gestion de la decoration</option>
-       </select>
-   </p>
+    <label class="control-label">Image</label>
+    <div class="controls">
+    <input name="image" value="<?php echo $list['image'];  ?>" type="file" required>
     </div>
+    <p>
+</div>
+<div>
+    <label class="control-label">type</label>
+    <div class="controls">
+    <select name="type" id="type">
+                         <option value="Folk">Folk </option>
+                         <option value="Occidental">Occidental</option>
+                         <option value="Oriental">Oriental</option>
+                         <option value="Patrimony">Patrimony</option>
+                         <option value="Tarab">Tarab</option>
+                      
+                     </select>
+    </div>
+<div>
+   
+    <p>
+</div>
+<div>
+
     
     <p>
 </div>
-<input type="submit" name="modifier" value="modifier" class="btn btn-primary">
- <input type="reset" value="Reset" style="background-color:#0c2646;border-color:#0c2646; color:white;">
+<input type="submit" name="Modifier" value="Modifier" >
 
     </form>
           </div>
@@ -461,6 +451,14 @@
   <script src="lib/jquery.nicescroll.js" type="text/javascript"></script>
   <!--common script for all pages-->
   <script src="lib/common-scripts.js"></script>
+<?php
+if(isset($_SESSION["message"])){
+	echo $_SESSION["message"];
+	unset($_SESSION["message"]);
+}
+
+
+?>
 </body>
 
 </html>

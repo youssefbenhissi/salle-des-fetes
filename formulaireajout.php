@@ -40,7 +40,7 @@
         <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
       </div>
       <!--logo start-->
-      <a href="index.php" class="logo"><b>DASH<span>IO</span></b></a>
+      <a href="index.php" class="logo"><b>MONA<span>LISA</span></b></a>
       <!--logo end-->
       <div class="nav notify-row" id="top_menu">
         <!--  notification start -->
@@ -229,7 +229,7 @@
       </div>
       <div class="top-menu">
         <ul class="nav pull-right top-menu">
-          <li><a class="logout" href="login.html">Logout</a></li>
+          <li><a class="logout" href="Formaulairelogin.php">Logout</a></li>
         </ul>
       </div>
     </header>
@@ -242,8 +242,8 @@
       <div id="sidebar" class="nav-collapse ">
         <!-- sidebar menu start-->
         <ul class="sidebar-menu" id="nav-accordion">
-          <p class="centered"><a href="profile.html"><img src="img/ui-sam.jpg" class="img-circle" width="80"></a></p>
-          <h5 class="centered">Sam Soffes</h5>
+          <p class="centered"><a href="profile.html"><img src="img/1.jpg" class="img-circle" width="80"></a></p>
+          <h5 class="centered">Rahma </h5>
           <li class="mt">
             <a href="index.html">
               <i class="fa fa-dashboard"></i>
@@ -253,27 +253,24 @@
           <li class="sub-menu">
             <a class="active" href="javascript:;">
               <i class="fa fa-desktop"></i>
-              <span>Gestion administrateur</span>
+              <span>Gestion d'animation</span>
               </a>
             <ul class="sub">
-              
-              
-              <li><a class="active" href="formulaireajout.php">ajouter administrateur</a></li>
-              <li><a href="formulairemodif.php">modifier administrateur</a></li>
-              <li><a href="formulairesupp.php">supprimer administrateur</a></li>
-              <li><a href="formulaireafficher.php">afficher administrateur</a></li>
-    
+            <li><a class="active" href="formulaireajout.php">ajouter chanteur</a></li>
+              <li><a href="formulaireafficher.php">afficher chanteur</a></li>
+              <li><a href="formulaireajouttroupe.php">ajouter troupe</a></li>
+               <li><a href="formulaireaffichertroupe.php">afficher troupe</a></li>
+  
             </ul>
           </li>
            <li class="sub-menu">
             <a href="javascript:;">
               <i class="fa fa-desktop"></i>
-              <span>Gestion des clients</span>
+              <span>Gestion de gastronomie</span>
               </a>
             <ul class="sub">
-                        <li><a href="Desactivercompte.php">Desactiver un compte</a></li>
-                        <li><a  href="afficher liste client.php">Liste Des Clients</a></li>
-                        <li><a  href="Reactivercompte.php">Reactiver Un compte</a></li>
+            <li><a href="formulaireajouttroupe.php">ajouter plat</a></li>
+                
             </ul>
           </li>
           <li class="sub-menu">
@@ -374,64 +371,51 @@
     <!-- **********************************************************************************************************************************************************
         MAIN CONTENT
         *********************************************************************************************************************************************************** -->
+ 
     <!--main content start-->
     <section id="main-content">
       <section class="wrapper">
         <div class="row mt">
           <div class="col-lg-6 col-md-6 col-sm-12">
            
-            <h3>Ajouter un administrateur</h3>
-<form method="POST" action="views/ajoutadmin.php">
+            <h3>Ajouter un chanteur</h3>
+<form method="POST" action="ajoutchanteur.php">
 <div>
     <label class="control-label">id</label>
     <div class="controls">
-    <input class="controle" type="number" name="id"  placeholder="saisir le nom du produit">
+    <input class="controle" type="number" name="id" required pattern="[0-9]" x-moz-errormessage="L id doit etre des chiffres" placeholder="saisir le nom du produit">
     </div>
     <p>
 </div>
 <div>
     <label class="control-label">nom</label>
     <div class="controls">
-    <input class="controle" type="text" name="nom"  placeholder="saisir le nom du produit">
+    <input class="controle" type="text" name="nom" required pattern="[a-zA-Z-\.]{3,20}" placeholder="saisir le nom du produit">
     </div>
     <p>
 </div>
 <div>
-    <label class="control-label">prenom</label>
+    <label class="control-label">image</label>
     <div class="controls">
-    <input class="controle" type="text" name="prenom"  placeholder="saisir le nom du produit">
+    <input class="controle" name="image" type="file"  required>
     </div>
     <p>
 </div>
 <div>
-    <label class="control-label">login</label>
+    <label class="control-label">type</label>
     <div class="controls">
-    <input class="controle" type="text" name="login"  placeholder="saisir le nom du produit">
-    </div>
-    <p>
-</div>
-<div>
-    <label class="control-label">mot de passe</label>
-    <div class="controls">
-    <input class="controle" type="password" name="mdp"  placeholder="saisir le nom du produit">
+    <select name="type" id="type">
+                         <option value="Folk">Folk </option>
+                         <option value="Occidental">Occidental</option>
+                         <option value="Oriental">Oriental</option>
+                         <option value="Patrimony">Patrimony</option>
+                         <option value="Tarab">Tarab</option>
+                      
+                     </select>
     </div>
     <p>
 </div>
 
-
-<div>
-     <p>
-       <label for="pays" value="tache">tache</label><br />
-       <select name="tache" >
-           <option value="panier">gestion du panier </option>
-           <option value="marketing">gestion du marketing</option>
-           <option value="reclamation">gestion des reclamation</option>
-           <option value="animation">gestion de l'animation</option>
-          <option value="gastronomie">gestion de la gastronomie</option>
-          <option value="decoration">gestion de la decoration</option>
-       </select>
-   </p>
-    </div>
     
     <p>
 </div>
@@ -439,6 +423,7 @@
  <input type="reset" value="Reset" style="background-color:#0c2646;border-color:#0c2646; color:white;">
 
     </form>
+  
           </div>
           <!-- /col-lg-6 -->
         </div>
@@ -453,6 +438,7 @@
   </section>
   <!-- js placed at the end of the document so the pages load faster -->
   <script src="lib/jquery/jquery.min.js"></script>
+  
 
   <script src="lib/bootstrap/js/bootstrap.min.js"></script>
   <script class="include" type="text/javascript" src="lib/jquery.dcjqaccordion.2.7.js"></script>

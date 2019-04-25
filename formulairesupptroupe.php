@@ -251,7 +251,7 @@
               </a>
           </li>
           <li class="sub-menu">
-            <a class="active" href="javascript:;">
+            <a  href="javascript:;">
               <i class="fa fa-desktop"></i>
               <span>Gestion des chanteurs</span>
               </a>
@@ -259,20 +259,20 @@
               
            <li><a href="formulaireajout.php">ajouter chanteur</a></li>
               <li><a href="formulairemodif.php">modifier chanteur</a></li>
-              <li><a class="active" href="formulairesupp.php">supprimer chanteur</a></li>
+              <li><a href="formulairesupp.php">supprimer chanteur</a></li>
               <li><a href="formulaireafficher.php">afficher chanteur</a></li>
               
             </ul>
           </li>
            <li class="sub-menu">
-            <a href="javascript:;">
+            <a class="active" href="javascript:;">
               <i class="fa fa-desktop"></i>
               <span>Gestion des troupes musicales</span>
               </a>
             <ul class="sub">
             <li><a href="formulaireajouttroupe.php">ajouter troupe</a></li>
                 <li><a href="formulairemodiftroupe.php">modifier troupe</a></li>
-                <li><a href="formulairesupptroupe.php">supprimer troupe</a></li>
+                <li><a class="active" href="formulairesupptroupe.php">supprimer troupe</a></li>
                 <li><a href="formulaireaffichertroupe.php">afficher troupe</a></li>
             </ul>
           </li>
@@ -380,10 +380,10 @@
         <div class="row mt">
           <div class="col-lg-6 col-md-6 col-sm-12">
            
-            <h3>supprimer un chanteur</h3>
-<form method="POST" action="supprimerchanteur.php">
+            <h3>supprimer une troupe </h3>
+<form method="POST" action="supprimertroupe.php">
 <div>
-    <label class="control-label">id</label>
+    <label class="control-label">id troupe</label>
     <div class="controls">
     <input class="controle" type="number" name="id"  placeholder="saisir l'identifiant">
     </div>

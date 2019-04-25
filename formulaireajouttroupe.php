@@ -229,7 +229,7 @@
       </div>
       <div class="top-menu">
         <ul class="nav pull-right top-menu">
-          <li><a class="logout" href="login.html">Logout</a></li>
+          <li><a class="logout" href="Formaulairelogin.php">Logout</a></li>
         </ul>
       </div>
     </header>
@@ -242,8 +242,8 @@
       <div id="sidebar" class="nav-collapse ">
         <!-- sidebar menu start-->
         <ul class="sidebar-menu" id="nav-accordion">
-          <p class="centered"><a href="profile.html"><img src="img/1.jpg" class="img-circle" width="80"></a></p>
-          <h5 class="centered">Rahma</h5>
+          <p class="centered"><a href="profile.html"><img src="img/ui-sam.jpg" class="img-circle" width="80"></a></p>
+          <h5 class="centered">Sam Soffes</h5>
           <li class="mt">
             <a href="index.html">
               <i class="fa fa-dashboard"></i>
@@ -253,29 +253,18 @@
           <li class="sub-menu">
             <a class="active" href="javascript:;">
               <i class="fa fa-desktop"></i>
-              <span>Gestion des chanteurs</span>
+              <span>Gestion d'animation</span>
               </a>
             <ul class="sub">
               
-           <li><a href="formulaireajout.php">ajouter chanteur</a></li>
-              <li><a href="formulairemodif.php">modifier chanteur</a></li>
-              <li><a class="active" href="formulairesupp.php">supprimer chanteur</a></li>
+            <li><a href="formulaireajout.php">ajouter chanteur</a></li>
               <li><a href="formulaireafficher.php">afficher chanteur</a></li>
-              
+              <li><a class="active" href="formulaireajouttroupe.php">ajouter troupe</a></li>
+               <li><a href="formulaireaffichertroupe.php">afficher troupe</a></li>
+    
             </ul>
           </li>
-           <li class="sub-menu">
-            <a href="javascript:;">
-              <i class="fa fa-desktop"></i>
-              <span>Gestion des troupes musicales</span>
-              </a>
-            <ul class="sub">
-            <li><a href="formulaireajouttroupe.php">ajouter troupe</a></li>
-                <li><a href="formulairemodiftroupe.php">modifier troupe</a></li>
-                <li><a href="formulairesupptroupe.php">supprimer troupe</a></li>
-                <li><a href="formulaireaffichertroupe.php">afficher troupe</a></li>
-            </ul>
-          </li>
+          
           <li class="sub-menu">
             <a href="javascript:;">
               <i class="fa fa-cogs"></i>
@@ -374,26 +363,56 @@
     <!-- **********************************************************************************************************************************************************
         MAIN CONTENT
         *********************************************************************************************************************************************************** -->
-    <!--main content start-->
+    
+
+    
+        <!--main content start-->
     <section id="main-content">
       <section class="wrapper">
         <div class="row mt">
           <div class="col-lg-6 col-md-6 col-sm-12">
            
-            <h3>supprimer un chanteur</h3>
-<form method="POST" action="supprimerchanteur.php">
+            <h3>Ajouter une troupe</h3>
+<form method="POST" action="ajouttroupe.php">
 <div>
     <label class="control-label">id</label>
     <div class="controls">
-    <input class="controle" type="number" name="id"  placeholder="saisir l'identifiant">
+    <input class="controle" type="number" name="id" required pattern="[0-9]" x-moz-errormessage="L id doit etre des chiffres" placeholder="saisir le nom du produit">
     </div>
     <p>
 </div>
-    
+<div>
+    <label class="control-label">nom</label>
+    <div class="controls">
+    <input class="controle" type="text" name="nom" required pattern="[a-zA-Z-\.]{3,20}" placeholder="saisir le nom du troupe">
+    </div>
     <p>
 </div>
 <div>
-<input type="submit" name="supprimer" value="supprimer" class="btn btn-primary">
+    <label class="control-label">Image</label>
+    <div class="controls">
+    <input name="image" type="file" required>
+    </div>
+    <p>
+</div>
+<div>
+    <label class="control-label">type</label>
+    <div class="controls">
+    <select name="type" id="type">
+                         <option value="Folk">Folk </option>
+                         <option value="Occidental">Occidental</option>
+                         <option value="Oriental">Oriental</option>
+                         <option value="Patrimony">Patrimony</option>
+                         <option value="Tarab">Tarab</option>
+                     </select>
+    </div>
+    <p>
+</div>
+
+    
+    <p>
+</div>
+<input type="submit" name="ajouter" value="Ajouter" class="btn btn-primary">
  <input type="reset" value="Reset" style="background-color:#0c2646;border-color:#0c2646; color:white;">
 
     </form>
@@ -405,6 +424,77 @@
       <!-- /wrapper -->
     </section>
     <!-- /MAIN CONTENT -->
+    <?php
+  if(isset($_POST['validation'])) {
+ 
+	 //Indique si le fichier a été téléchargé
+	 if(!is_uploaded_file($_FILES['image']['tmp_name']))
+		echo 'Un problème est survenu durant l opération. Veuillez réessayer !';
+	 else {
+		//liste des extensions possibles    
+		$extensions = array('/png', '/gif', '/jpg', '/jpeg');
+ 
+		//récupère la chaîne à partir du dernier / pour connaître l'extension
+		$extension = strrchr($_FILES['image']['type'], '/');
+ 
+		//vérifie si l'extension est dans notre tableau            
+		if(!in_array($extension, $extensions))
+			echo 'Vous devez uploader un fichier de type png, gif, jpg, jpeg.';
+		else {         
+ 
+			//on définit la taille maximale
+			define('MAXSIZE', 300000);        
+			if($_FILES['image']['size'] > MAXSIZE)
+			   echo 'Votre image est supérieure à la taille maximale de '.MAXSIZE.' octets';
+			else {
+				//connexion à la base de données
+				try {
+					$bdd = new PDO('mysql:host=localhost;dbname=site', 'root', '');
+				} catch (Exception $e) {
+					exit('Erreur : ' . $e->getMessage());
+				}
+ 
+				//Lecture du fichier
+				$image = file_get_contents($_FILES['image']['tmp_name']);
+ 
+				$req = $bdd->prepare("INSERT INTO images(nom, description, img, extension) VALUES(:nom, :description, :image, :type)");
+				$req->execute(array(
+					'nom' => $_POST['nom'],
+					'description' => $_POST['description'],
+					'image' => $image,
+					'type' => $_FILES['image']['type']
+					));
+ 
+				echo 'L\'insertion s est bien déroulée !';
+			 }
+		  }
+	  }
+  }
+?>
+  <section id="main-content">
+      <section class="wrapper">
+        <div class="row mt">
+          <div class="col-lg-6 col-md-6 col-sm-12">
+ 
+	<h1>Ajouter costume</h1>
+	<form enctype="multipart/form-data" action="formulaireajouttroupe.php" method="post">
+		<p>
+			<label class="control-label" for="nom">Nom : </label><input type="text" name="nom" id="nom" /><br />
+			<label class="control-label" for="description">Description  : </label><textarea name="description" id="description" rows="10" cols="50"></textarea><br />
+			<label class="control-label" for="image">Image costume: </label><input type="file" name="image" id="image" /><br />
+			<label for="validation">Valider : </label><input type="submit" name="validation" id="validation" value="Envoyer" />
+		</p>
+	</form>
+</body>
+</html>
+
+</div>
+          <!-- /col-lg-6 -->
+        </div>
+        <!--/ row -->
+      </section>
+      <!-- /wrapper -->
+    </section>
     <!--main content end-->
     <!--footer start-->
    

@@ -1,56 +1,35 @@
+<?php
 
 
-<!DOCTYPE html>
-<html lang="en" >
 
-<head>
-  <meta charset="UTF-8">
-  <title>login</title>
-  
-  
-  
-      <link rel="stylesheet" href="css/stylelogin.css">
+include_once '../../core/utilisateurC.php';
 
-  
-</head>
+if(isset($_POST['login']) && isset($_POST['password']))
+{
+	$utilisateurC = new UtilisateurC();
+	$result = $utilisateurC->verifierLogin($_POST['login'],$_POST['password']);
+	if($result->count==0)
+	{
+		header("location: ../../views/frontt/login-register.html");
+	}
+	else
+	{
+		session_start();
+		$_SESSION['login'] = $result->login;
+		$_SESSION['role'] = $result->role;
+		$currentUrl = $_SESSION['currentURL'];
+		header("location: ../../views/frontt/login.php");
+	}
 
-<body>
-
-  <div class="wrapper">
-	<div class="container">
-		<h1>Welcome</h1>
-		
-		<form class="form" action="views/connexion.php" method="POST">
-			<input type="text" placeholder="Username" name="login">
-			<input type="password" placeholder="Password" name="mdp">
-			<button type="submit" name="submit" id="login-button">Login</button>
-			
-
-		</form>
-	</div>
-	
-	<ul class="bg-bubbles">
-		<li></li>
-		<li></li>
-		<li></li>
-		<li></li>
-		<li></li>
-		<li></li>
-		<li></li>
-		<li></li>
-		<li></li>
-		<li></li>
-	</ul>
-</div>
-
-
-  
-
-    <script  src="js/index.js"></script>
+}
+else
+{
+	header("location: ../../views/frontt/login.php");
+}
 
 
 
 
-</body>
 
-</html>
+
+ ?>
