@@ -1,6 +1,2 @@
-Thanks for downloading this template!
-
-Template Name: Dashio
-Template URL: https://templatemag.com/dashio-bootstrap-admin-template/
-Author: TemplateMag.com
-License: https://templatemag.com/license/
+Fully working PHP/AJAX contact form is available in the pro version of the template.
+You can buy it from: https://templatemag.com/dashio-bootstrap-admin-template/
