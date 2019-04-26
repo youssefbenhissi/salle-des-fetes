@@ -11,7 +11,7 @@ if(isset($_POST["Modifier"])) {
     $platDescription = $_POST["platdesc"];
     $platPrice = $_POST["platprice"];
     $platImage = $_FILES["platimage"];
-
+    $catt = $_POST["categorie"];
     $message = "";
     if ($platName == "") {
         $message = "Plat  Name must be filled ";
@@ -37,7 +37,7 @@ if(isset($_POST["Modifier"])) {
 
     var_dump($_GET['id']+0);
     var_dump($platName);
-$p=new plat($platName,$platDescription,$platPrice,$platImage['name'],2);
+$p=new plat($platName,$platDescription,$platPrice,$platImage['name'],$catt);
 var_dump($p);
 
   $platc->modifierplat($p, (int)$_GET["id"]);
@@ -47,5 +47,6 @@ else{
     echo "vous devez selectionée un plat !!!" ;
 
 }
-header location
+
+header('Location:affichplat.php');
 ?>

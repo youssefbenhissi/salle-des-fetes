@@ -13,7 +13,12 @@ else
 ?>
 <head>
 
+
         <style>
+            #tt{
+                background-color:indianred;
+                color:white;
+            }
         .product-grid{font-family:Raleway,sans-serif;text-align:center;padding:0 0 0px;border:0px solid rgba(0,0,0,.1);overflow:hidden;position:relative;z-index:1}
         .product-grid .product-image{position:relative;transition:all .3s ease 0s}
         .product-grid .product-image a{display:block}
@@ -450,47 +455,65 @@ else
               <br id="x"/>
               <div class="container">
                   <div class="row">
-                  <?php
-                  if(!empty($list)){
-                      foreach($list as $p){
-                      ?>
-                      <div class="col-md-3 col-sm-6">
 
 
-                          <div class="product-grid">
+                          <table border="3" class="table">
+                              <thead>
+                              <th  id="tt"><strong>plat Name</strong></th>
+                              <th id="tt"><strong>plat ID</strong></th>
+                              <th id="tt"><strong>plat Price</strong></th>
+                              <th id="tt"><strong>plat Description</strong></th>
+                              <th id="tt"><strong>plat  Image</strong></th>
+                              <th id="tt"><strong>Supprission</strong></th>
+                              <th id="tt"><strong>Modification</strong></th>
+
+                              </thead>
+                              <tbody>
+                              <?php
+                              if(!empty($list)){
+                                  foreach($list as $p){
+                                      ?>
+                                      <tr scope="row">
+                                          <td><?php echo $p['platName']; ?></td>
+                                          <td><?php echo $p['platID']; ?></td>
+                                          <td><?php echo $p['platPrice']; ?></td>
+                                          <td><?php echo $p['platDescription']; ?></td>
+                                          <td> <img height="150px" width="170px" src="img/<?php echo($p["platImage"]);
+                                          ?>"></td>
+
+                                          <td> <a href="supp.php?id=<?php echo $p["platID"];  ?>">
+                                              <input type="button" value="supprimer" class="btn btn-danger"></a></td>
+                                          <td>  <a href="platEdit.php?id=<?php echo $p["platID"];  ?>">
+                                              <input type="submit" value="Modifier" class="btn btn-warning"></a></td>
+
+                                      </tr>
+                                  <?php } }?>
+                              </tbody>
+                          </table>
 
 
-                              <div class="product-image">
-                                  <h3 id="uu"> </h3>
 
-
-                                <h5><?php echo ($p["platName"]); ?></h5>
-                                <h5><?php echo ($p["platID"]); ?></h5>
-                                 <h5><?php echo ($p["platPrice"]); ?></h5>
-
-                                  <img height="15px" width="15px" src="img/<?php echo($p["platImage"]);
-                                  ?>">
-                                  
-                                       <h5><?php echo ($p["platDescription"]); ?></h5>
-                                </div>
-                              <a href="supp.php?id=<?php echo $p["platID"];  ?>">
-                                  <input type="button" value="supprimer le plat"></a>
-                                   <a href="platEdit.php?id=<?php echo $p["platID"];  ?>">
-                                  <input type="submit" value="Modifier le plat"></a>
-
-                          </div>
-
-                      </div>
-                      <?php } }?>
-
-                  </div>
-<h5>Nbre de plats:<?php echo $nbr['QTE'];; ?></h5>
+                                                  </div>
+                               <h5>Nbre de plats:<?php echo $nbr['QTE'];; ?></h5>
                   <?php if(!empty($list)){ ?>
                       <a href="trier.php?Name=<?php echo $p["platName"]; ?>">
-                          <input class="btn btn-danger" type="button" value="Trier">
+                          <input class="btn btn-success" type="button" value="Trier">
+                      </a>
+
+                        <a href="trier.php">
+                          <select> <option>Name  </option>
+                      
+                            <option>Description</option>
+                             <option>Price</option>
+
+
+
+                          </select>
+                          
                       </a>
                   <?php } ?>
               </div>
+
           <!-- /col-lg-6 -->
         </div>
         <!--/ row -->

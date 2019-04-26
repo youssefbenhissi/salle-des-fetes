@@ -1,7 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<?php
+//include "core/categorieC.php";
+//$categoriec =new categorieC();
+
+//$nbr=$categoriec->Numbercat();
+//if(empty($_POST['search'])==false){
+//$x=$_POST['search'];
+//$list=$categoriec->recherchercat($x);}
+//else
+//$list=$categoriec->recherchercat();
+?>
 <head>
+
+        <style>
+            #tt{
+                background-color:indianred;
+                color:white;
+            }
+        .product-grid{font-family:Raleway,sans-serif;text-align:center;padding:0 0 0px;border:0px solid rgba(0,0,0,.1);overflow:hidden;position:relative;z-index:1}
+        .product-grid .product-image{position:relative;transition:all .3s ease 0s}
+        .product-grid .product-image a{display:block}
+        .product-grid .product-image img{width:100%;height:auto}
+
+        .product-grid .social{width:150px;padding:0;margin:0;list-style:none;opacity:0;transform:translateY(-50%) translateX(-50%);position:absolute;top:60%;left:50%;z-index:1;transition:all .3s ease 0s}
+        .product-grid:hover .social{opacity:1;top:50%}
+        .product-grid .social li{display:inline-block}
+        .product-grid .social li a{color:#fff;background-color:#333;font-size:16px;line-height:40px;text-align:center;height:40px;width:40px;margin:0 2px;display:block;position:relative;transition:all .3s ease-in-out}
+        .product-grid .social li a:after,.product-grid .social li a:before{content:attr(data-tip);color:#fff;background-color:#000;font-size:12px;letter-spacing:1px;line-height:20px;padding:1px 5px;white-space:nowrap;opacity:0;transform:translateX(-50%);position:absolute;left:50%;top:-30px}
+        .product-grid .social li a:after{content:'';height:15px;width:15px;border-radius:0;transform:translateX(-50%) rotate(45deg);top:-20px;z-index:-1}
+        .product-grid .social li a:hover:after,.product-grid .social li a:hover:before{opacity:1}
+        .product-grid .product-discount-label,.product-grid .product-new-label{color:#fff;background-color:#ef5777;font-size:12px;text-transform:uppercase;padding:2px 7px;display:block;position:absolute;top:10px;left:0}
+        .product-grid .product-discount-label{background-color:#333;left:auto;right:0}
+
+        .product-grid .product-content{background-color:#fff;text-align:center;padding:12px 0;margin:0 auto;position:absolute;left:0;right:0;bottom:-27px;z-index:1;transition:all .3s}
+        .product-grid:hover .product-content{bottom:0}
+        .product-grid .price{color:#333;font-size:17px;font-family:Montserrat,sans-serif;font-weight:700;letter-spacing:.6px;margin-bottom:8px;text-align:center;transition:all .3s}
+        .product-grid .price span{color:#999;font-size:13px;font-weight:400;text-decoration:line-through;margin-left:3px;display:inline-block}
+        .product-grid .add-to-cart{color:#000;font-size:13px;font-weight:600}
+        @media only screen and (max-width:990px){.product-grid{margin-bottom:30px}
+
+            #bri{
+                font-weight: bold;
+
+            }
+            .oo{
+                width: 20px;
+                border-radius: 50%;
+                display: block;
+                height: 20px;
+            }
+            #x{
+
+                font-size:100px;
+
+            }
+            #y{
+
+                font-size:50px;
+
+            }
+
+            #uu{
+                padding: 0px;
+            }
+            font-weight: bold;
+            font-family: 'Titillium Web', sans-serif;
+        }
+        #alls{
+            text-align: right;
+            font-size: 20px;
+            margin-right: 10px;
+        }
+
+
+
+
+
+    </style>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="">
@@ -243,7 +320,7 @@
         <!-- sidebar menu start-->
         <ul class="sidebar-menu" id="nav-accordion">
           <p class="centered"><a href="profile.html"><img src="img/ui-sam.jpg" class="img-circle" width="80"></a></p>
-          <h5 class="centered">Nesrine Abdelkarim </h5>
+          <h5 class="centered"> Nesrine Abdelkarim</h5>
           <li class="mt">
             <a href="index.html">
               <i class="fa fa-dashboard"></i>
@@ -253,12 +330,13 @@
           <li class="sub-menu">
             <a class="active" href="javascript:;">
               <i class="fa fa-desktop"></i>
-              <span>Gestion  de gastronomie </span>
+              <span> Gestion de gastronomie </span>
               </a>
             <ul class="sub">
               
-              <li class="active"><a href="buttons.html">ajouter plat </a></li>
-              <li class="active"><a href="ajcategorie.html">ajouter categorie</a></li>
+              <li class="active" ><a href="buttons.php">ajouter plat</a></li>
+
+              <li class="active"><a href="ajoucategorie.php">ajouter   catégorie </a></li>
             </ul>
           </li>
           <li class="sub-menu">
@@ -364,38 +442,53 @@
       <section class="wrapper">
         <div class="row mt">
           <div class="col-lg-6 col-md-6 col-sm-12">
-           
-            <h3>Ajouter une catégorie</h3>
-<form method="POST" action="ajoutcategorie.php">
-<div>
-    <label class="control-label">Libelle</label>
-    <div class="controls">
-    <input class="controle" type="text" name="pseudo" required pattern="[a-zA-Z-\.]{3,12}" placeholder="saisir le nom du catégorie">
-    </div>
-    <p>
-</div>
-<div>
-    <label class="control-label">theme</label>
-    <div class="controls">
-    <input class="controle" type="text" name="pseudo" required pattern="[a-zA-Z-\.]{3,12}" placeholder="saisir le nom du théme">
-    </div>
-    <p>
-</div>
+             <?php
+              include "core/categorieC.php";
+              $categor =new categorieC();
+              $list=$categor->triercat();
 
-<div>
-    <label class="control-label">Description</label>
-    <div class="controls">
-    <textarea rows="4" cols="50" name="description" placeholder="Description" required pattern="[A-Za-z].{4,}"></textarea>
-    </div>
-    <p>
-</div>
+?>
+              <center><h1 id="bri"><strong>List des Categories</strong></h1></center>
 
-<br/>
+              <br id="y"/>
 
-<input type="submit" name="ajouter" value="Ajouter" class="btn btn-primary">
- <input type="reset" value="Reset" style="background-color:#0c2646;border-color:#0c2646; color:white;">
-    </form>
-          </div>
+
+              <br id="x"/>
+              <div class="container">
+                  <div class="row">
+
+<table border="3" class="table">
+    <thead>
+    <th  id="tt"><strong>Libelle</strong></th>
+    <th id="tt"><strong>Theme</strong></th>
+    <th id="tt"><strong>Description</strong></th>
+    <th id="tt"><strong>Suppression</strong></th>
+    <th id="tt"><strong>Modification</strong></th>
+
+    </thead>
+    <tbody>
+    <?php
+    if(!empty($list)){
+    foreach($list as $p){
+    ?>
+        <tr scope="row">
+            <td><?php echo $p['libelle']; ?></td>
+            <td><?php echo $p['theme']; ?></td>
+            <td><?php echo $p['Description']; ?></td>
+            <td><a href="suppcat.php?id=<?php echo $p["catid"];  ?>">
+                <input type="button" value="supprimer  categorie " class="btn btn-danger"></a></td>
+            <td>  <a href="catEdit.php?id=<?php echo $p["catid"];  ?>">
+                <input type="submit" value="Modifier  categorie"  class="btn btn-warning"></a></td>
+
+        </tr>
+    <?php } }?>
+    </tbody>
+</table>
+
+
+                  </div>
+
+                  </div>
           <!-- /col-lg-6 -->
         </div>
         <!--/ row -->

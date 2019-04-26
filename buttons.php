@@ -1,10 +1,10 @@
-﻿<?php
+<?php
 session_start();
 include "core/categorieC.php";
 $cat =new categorieC();
     $list=$cat->categoriePrint();
 //var_dump($list);
-    ?>
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -27,7 +27,7 @@ $cat =new categorieC();
   <!-- Custom styles for this template -->
   <link href="css/style.css" rel="stylesheet">
   <link href="css/style-responsive.css" rel="stylesheet">
-
+<script type="text/javascript" src="verif.js"></script>
   <!-- =======================================================
     Template Name: Dashio
     Template URL: https://templatemag.com/dashio-bootstrap-admin-template/

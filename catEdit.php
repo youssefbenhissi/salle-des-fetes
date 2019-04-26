@@ -1,3 +1,10 @@
+<?php
+session_start();
+include "core/categorieC.php";
+$cat =new categorieC();
+    $list=$cat->recupcat((int)$_GET['id']);
+//var_dump($list);
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -257,8 +264,8 @@
               </a>
             <ul class="sub">
               
-              <li class="active"><a href="buttons.html">ajouter plat </a></li>
-              <li class="active"><a href="ajcategorie.html">ajouter categorie</a></li>
+              <li class="active"><a href="buttons.php">ajouter plat </a></li>
+              <li class="active"><a href="ajcategorie.php">ajouter categorie</a></li>
             </ul>
           </li>
           <li class="sub-menu">
@@ -365,19 +372,19 @@
         <div class="row mt">
           <div class="col-lg-6 col-md-6 col-sm-12">
            
-            <h3>Ajouter une catégorie</h3>
-<form method="POST" action="ajoutcategorie.php">
+            <h3>Modifier  une catégorie</h3>
+<form method="POST" name="Modifier" action="modifiercat.php?id=<?php echo $list['catid']; ?>"  enctype="multipart/form-data">
 <div>
     <label class="control-label">Libelle</label>
     <div class="controls">
-    <input class="controle" type="text" name="pseudo" required pattern="[a-zA-Z-\.]{3,12}" placeholder="saisir le nom du catégorie">
+    <input class="controle" type="text" name="libelle" value="<?php echo $list['libelle']; ?>" required pattern="[a-zA-Z-\.]{3,12}" placeholder="saisir le nom du catégorie">
     </div>
     <p>
 </div>
 <div>
     <label class="control-label">theme</label>
     <div class="controls">
-    <input class="controle" type="text" name="pseudo" required pattern="[a-zA-Z-\.]{3,12}" placeholder="saisir le nom du théme">
+    <input class="controle" type="text" name="theme" value="<?php echo $list['theme']; ?>" required pattern="[a-zA-Z-\.]{3,12}" placeholder="saisir le nom du théme">
     </div>
     <p>
 </div>
@@ -385,14 +392,14 @@
 <div>
     <label class="control-label">Description</label>
     <div class="controls">
-    <textarea rows="4" cols="50" name="description" placeholder="Description" required pattern="[A-Za-z].{4,}"></textarea>
+    <textarea rows="4" cols="50" name="Description" value="<?php echo $list['Description']; ?>" placeholder="Description" required pattern="[A-Za-z].{4,}"></textarea>
     </div>
     <p>
 </div>
 
 <br/>
 
-<input type="submit" name="ajouter" value="Ajouter" class="btn btn-primary">
+<input type="submit" name="modifier" value="Modifier" class="btn btn-primary">
  <input type="reset" value="Reset" style="background-color:#0c2646;border-color:#0c2646; color:white;">
     </form>
           </div>
@@ -416,6 +423,14 @@
   <script src="lib/jquery.nicescroll.js" type="text/javascript"></script>
   <!--common script for all pages-->
   <script src="lib/common-scripts.js"></script>
+  <?php
+if(isset($_SESSION["message"])){
+  echo $_SESSION["message"];
+  unset($_SESSION["message"]);
+}
+
+
+?>
 </body>
 
 </html>

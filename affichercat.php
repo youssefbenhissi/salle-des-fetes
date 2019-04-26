@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<?php
+//include "core/categorieC.php";
+//$categoriec =new categorieC();
+
+//$nbr=$categoriec->Numbercat();
+//if(empty($_POST['search'])==false){
+//$x=$_POST['search'];
+//$list=$categoriec->recherchercat($x);}
+//else
+//$list=$categoriec->recherchercat();
+?>
 <head>
 
         <style>
@@ -323,7 +334,7 @@
               </a>
             <ul class="sub">
               
-              <li class="active"><a href="buttons.php">ajouter plat</a></li>
+              <li class="active" ><a href="buttons.php">ajouter plat</a></li>
 
               <li class="active"><a href="ajoucategorie.php">ajouter   catégorie </a></li>
             </ul>
@@ -435,7 +446,7 @@
               include "core/categorieC.php";
               $categor =new categorieC();
               $list=$categor->categoriePrint();
-
+//var_dump($list);
 ?>
               <center><h1 id="bri"><strong>List des Categories</strong></h1></center>
 
@@ -451,6 +462,9 @@
     <th  id="tt"><strong>Libelle</strong></th>
     <th id="tt"><strong>Theme</strong></th>
     <th id="tt"><strong>Description</strong></th>
+    <th id="tt"><strong>Suppression</strong></th>
+    <th id="tt"><strong>Modification</strong></th>
+
     </thead>
     <tbody>
     <?php
@@ -461,6 +475,10 @@
             <td><?php echo $p['libelle']; ?></td>
             <td><?php echo $p['theme']; ?></td>
             <td><?php echo $p['Description']; ?></td>
+            <td><a href="suppcat.php?id=<?php echo $p["catid"];  ?>">
+                <input type="button" value="supprimer  categorie " class="btn btn-danger"></a></td>
+            <td>  <a href="catEdit.php?id=<?php echo $p["catid"];  ?>">
+                <input type="submit" value="Modifier  categorie"  class="btn btn-warning"></a></td>
 
         </tr>
     <?php } }?>
@@ -469,6 +487,12 @@
 
 
                   </div>
+
+                  <?php if(!empty($list)){ ?>
+                      <a href="triercat.php?Name=<?php echo $p["libelle"]; ?>">
+                          <input class="btn btn-success" type="button" value="Trier">
+                      </a>
+                  <?php } ?>
 
                   </div>
           <!-- /col-lg-6 -->

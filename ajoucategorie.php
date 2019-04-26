@@ -1,5 +1,9 @@
 <?php
 session_start();
+include "core/categorieC.php";
+$cat =new categorieC();
+    $list=$cat->categoriePrint();
+//var_dump($list);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -373,14 +377,14 @@ session_start();
 <div>
     <label class="control-label">Libelle</label>
     <div class="controls">
-    <input class="controle" type="text" name="pseudo" required pattern="[a-zA-Z-\.]{3,12}" placeholder="saisir le nom du catégorie">
+    <input class="controle" type="text" name="libelle" required pattern="[a-zA-Z-\.]{3,20}" placeholder="saisir le nom du catégorie">
     </div>
     <p>
 </div>
 <div>
     <label class="control-label">theme</label>
     <div class="controls">
-    <input class="controle" type="text" name="pseudo" required pattern="[a-zA-Z-\.]{3,12}" placeholder="saisir le nom du théme">
+    <input class="controle" type="text" name="theme" required pattern="[a-zA-Z-\.]{3,20}" placeholder="saisir le nom du théme">
     </div>
     <p>
 </div>
@@ -388,7 +392,7 @@ session_start();
 <div>
     <label class="control-label">Description</label>
     <div class="controls">
-    <textarea rows="4" cols="50" name="description" placeholder="Description" required pattern="[A-Za-z].{4,}"></textarea>
+    <textarea rows="4" cols="50" name="Description" placeholder="Description" required pattern="[A-Za-z].{4,}"></textarea>
     </div>
     <p>
 </div>
