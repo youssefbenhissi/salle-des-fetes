@@ -1,9 +1,38 @@
 <!doctype html>
 <html class="no-js" lang="zxx">
+<?php
+include "../backoffice/core/categorieC.php";
+include "../backoffice/core/platc.php";
+$categor =new categorieC();
+$plat=new platc();
+
+$list=$categor->categoriePrint();
+
+if(!empty($_GET['ppp'])){
+$x=$plat->recupererplatseloncat((int)$_GET['ppp']);
+
+}
+else{
+    $x=$plat->afficherplat();
+}
+?>
 <head>
+    <style>
+        marquee{
+            font-size:20px;
+            color: red;
+            font-weight: bold;
+        }
+        #cattittle{
+            font-size:20px;
+    padding: 10px;
+            font-weight: bold;
+            color:palevioletred;
+        }
+    </style>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Cart || Uniqlo-Minimalist eCommerce Bootstrap 4 Template</title>
+    <title>Gastronomie Page || Uniqlo-Minimalist eCommerce Bootstrap 4 Template</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
@@ -44,7 +73,7 @@
                         <div class="col-md-2 col-lg-2 col-6">
                             <div class="logo">
                                 <a href="index.html">
-                                    <img src="images/logo/uniqlo.png" alt="logo">
+                                    <img src="logo.png" alt="logo">
                                 </a>
                             </div>
                         </div>
@@ -61,12 +90,12 @@
                                             <li><a href="blog-details.html">blog details</a></li>
                                         </ul>
                                     </li>
-                                    <li class="drop"><a href="shop.html">Shop</a>
+                                    <li class="drop"><a href="shop.php">Gastronomie</a>
                                     </li>
                                     <li class="drop"><a href="#">pages</a>
                                         <ul class="dropdown">
                                             <li><a href="about.html">about</a></li>
-                                            <li><a href="shop.html">shop</a></li>
+                                            <li><a href="shop.php">Gastronomie</a></li>
                                             <li><a href="product-details.html">product details</a></li>
                                             <li><a href="cart.html">cart</a></li>
                                             <li><a href="wishlist.html">wishlist</a></li>
@@ -93,7 +122,7 @@
                                         <li><a href="#">pages</a>
                                             <ul>
                                                 <li><a href="about.html">about</a></li>
-                                                <li><a href="shop.html">shop</a></li>
+                                                <li><a href="shop.php">Gastronomie</a></li>
                                                 <li><a href="product-details.html">product details</a></li>
                                                 <li><a href="cart.html">cart</a></li>
                                                 <li><a href="wishlist.html">wishlist</a></li>
@@ -123,7 +152,6 @@
             <!-- End Mainmenu Area -->
         </header>
         <!-- End Header Style -->
-        
         <div class="body__overlay"></div>
         <!-- Start Offset Wrapper -->
         <div class="offset__wrapper">
@@ -215,7 +243,7 @@
                         <div class="shp__single__product">
                             <div class="shp__pro__thumb">
                                 <a href="#">
-                                    <img src="images/product/sm-img/1.jpg" alt="product images">
+                                    <img src="images/product/sm-img/4.jpg" alt="product images">
                                 </a>
                             </div>
                             <div class="shp__pro__details">
@@ -257,17 +285,17 @@
         </div>
         <!-- End Offset Wrapper -->
         <!-- Start Bradcaump area -->
-        <div class="ht__bradcaump__area" style="background: rgba(0, 0, 0, 0) url(images/bg/2.jpg) no-repeat scroll center center / cover ;">
+        <div class="ht__bradcaump__area" style="background: rgba(0, 0, 0, 0) url(gastronomie.jpg) no-repeat scroll center center / cover ;">
             <div class="ht__bradcaump__wrap">
                 <div class="container">
                     <div class="row">
                         <div class="col-12">
                             <div class="bradcaump__inner text-center">
-                                <h2 class="bradcaump-title">Cart</h2>
+                                <h2 class="bradcaump-title">Gastronomie Page</h2>
                                 <nav class="bradcaump-inner">
                                   <a class="breadcrumb-item" href="index.html">Home</a>
                                   <span class="brd-separetor">/</span>
-                                  <span class="breadcrumb-item active">Cart</span>
+                                  <span class="breadcrumb-item active">GastronomiePage</span>
                                 </nav>
                             </div>
                         </div>
@@ -275,110 +303,144 @@
                 </div>
             </div>
         </div>
-        <!-- End Bradcaump area -->
-        <!-- cart-main-area start -->
-        <div class="cart-main-area ptb--120 bg__white">
+        <!-- End Bradcaump area --> 
+        <!-- Start Our Product Area -->
+        <section class="htc__product__area shop__page ptb--130 bg__white">
             <div class="container">
-                <div class="row">
-                    <div class="col-md-12 col-sm-12 col-12">
-                        <form action="#">               
-                            <div class="table-content table-responsive">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th class="product-thumbnail">Image</th>
-                                            <th class="product-name">Product</th>
-                                            <th class="product-price">Price</th>
-                                            <th class="product-quantity">Quantity</th>
-                                            <th class="product-subtotal">Total</th>
-                                            <th class="product-remove">Remove</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td class="product-thumbnail"><a href="#"><img src="images/product/4.png" alt="product img" /></a></td>
-                                            <td class="product-name"><a href="#">Vestibulum suscipit</a></td>
-                                            <td class="product-price"><span class="amount">£165.00</span></td>
-                                            <td class="product-quantity"><input type="number" value="1" /></td>
-                                            <td class="product-subtotal">£165.00</td>
-                                            <td class="product-remove"><a href="#">X</a></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="product-thumbnail"><a href="#"><img src="images/product/3.png" alt="product img" /></a></td>
-                                            <td class="product-name"><a href="#">Vestibulum dictum magna</a></td>
-                                            <td class="product-price"><span class="amount">£50.00</span></td>
-                                            <td class="product-quantity"><input type="number" value="1" /></td>
-                                            <td class="product-subtotal">£50.00</td>
-                                            <td class="product-remove"><a href="#">X</a></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-8 col-sm-12">
-                                    <div class="buttons-cart">
-                                        <input type="submit" value="Update Cart" />
-                                        <a href="#">Continue Shopping</a>
-                                    </div>
-                                    <div class="coupon">
-                                        <h3>Coupon</h3>
-                                        <p>Enter your coupon code if you have one.</p>
-                                        <input type="text" placeholder="Coupon code" />
-                                        <input type="submit" value="Apply Coupon" />
-                                    </div>
+                <div class="htc__product__container">
+                    <!-- Start Product MEnu -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="filter__menu__container">
+                                <div class="product__menu">
+                                    <marquee behavior="alternate">les Categories:</marquee>
+                                     <a href="jeu.html">
+                                              <input type="submit" value="Loisir" class="btn btn-warning"></a>
+                                    <?php foreach ($list as $lst) {
+
+                                            ?>
+
+                                       <span id="cattittle">
+                                                     <a href="shop.php?ppp=<?php echo $lst['catid']; ?>">
+                                                         <?php echo $lst['libelle']; ?>
+                                                     </a></span>
+
+
+                               <?php } ?>
                                 </div>
-                                <div class="col-md-4 col-sm-12 ">
-                                    <div class="cart_totals">
-                                        <h2>Cart Totals</h2>
-                                        <table>
-                                            <tbody>
-                                                <tr class="cart-subtotal">
-                                                    <th>Subtotal</th>
-                                                    <td><span class="amount">£215.00</span></td>
-                                                </tr>
-                                                <tr class="shipping">
-                                                    <th>Shipping</th>
-                                                    <td>
-                                                        <ul id="shipping_method">
-                                                            <li>
-                                                                <input type="radio" /> 
-                                                                <label>
-                                                                    Flat Rate: <span class="amount">£7.00</span>
-                                                                </label>
-                                                            </li>
-                                                            <li>
-                                                                <input type="radio" /> 
-                                                                <label>
-                                                                    Free Shipping
-                                                                </label>
-                                                            </li>
-                                                            <li></li>
-                                                        </ul>
-                                                        <p><a class="shipping-calculator-button" href="#">Calculate Shipping</a></p>
-                                                    </td>
-                                                </tr>
-                                                <tr class="order-total">
-                                                    <th>Total</th>
-                                                    <td>
-                                                        <strong><span class="amount">£215.00</span></strong>
-                                                    </td>
-                                                </tr>                                           
-                                            </tbody>
-                                        </table>
-                                        <div class="wc-proceed-to-checkout">
-                                            <a href="checkout.html">Proceed to Checkout</a>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Start Filter Menu -->
+                    <div class="filter__wrap">
+                        <div class="filter__cart">
+                            <div class="filter__cart__inner">
+                                <div class="filter__menu__close__btn">
+                                    <a href="#"><i class="zmdi zmdi-close"></i></a>
+                                </div>
+                                <div class="filter__content">
+                                    <!-- Start Single Content -->
+                                    <div class="fiter__content__inner">
+                                        <div class="single__filter">
+                                            <h2>Sort By</h2>
+                                            <ul class="filter__list">
+                                                <li><a href="#default">Default</a></li>
+                                                <li><a href="#accessories">Accessories</a></li>
+                                                <li><a href="#bags">Bags</a></li>
+                                                <li><a href="#chair">Chair</a></li>
+                                                <li><a href="#decoration">Decoration</a></li>
+                                                <li><a href="#fashion">Fashion</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="single__filter">
+                                            <h2>Size</h2>
+                                            <ul class="filter__list">
+                                                <li><a href="#xxl">XXL</a></li>
+                                                <li><a href="#xl">XL</a></li>
+                                                <li><a href="#x">X</a></li>
+                                                <li><a href="#l">L</a></li>
+                                                <li><a href="#m">M</a></li>
+                                                <li><a href="#s">S</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="single__filter">
+                                            <h2>Tags</h2>
+                                            <ul class="filter__list">
+                                                <li><a href="#">All</a></li>
+                                                <li><a href="#">Accessories</a></li>
+                                                <li><a href="#">Bags</a></li>
+                                                <li><a href="#">Chair</a></li>
+                                                <li><a href="#">Decoration</a></li>
+                                                <li><a href="#">Fashion</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="single__filter">
+                                            <h2>Price</h2>
+                                            <ul class="filter__list">
+                                                <li><a href="#">$0.00 - $50.00</a></li>
+                                                <li><a href="#">$50.00 - $100.00</a></li>
+                                                <li><a href="#">$100.00 - $150.00</a></li>
+                                                <li><a href="#">$150.00 - $200.00</a></li>
+                                                <li><a href="#">$300.00 - $500.00</a></li>
+                                                <li><a href="#">$500.00 - $700.00</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="single__filter">
+                                            <h2>Color</h2>
+                                            <ul class="filter__list sidebar__list">
+                                                <li class="black"><a href="#"><i class="zmdi zmdi-circle"></i>Black</a></li>
+                                                <li class="blue"><a href="#"><i class="zmdi zmdi-circle"></i>Blue</a></li>
+                                                <li class="brown"><a href="#"><i class="zmdi zmdi-circle"></i>Brown</a></li>
+                                                <li class="red"><a href="#"><i class="zmdi zmdi-circle"></i>Red</a></li>
+                                                <li class="orange"><a href="#"><i class="zmdi zmdi-circle"></i>Orange</a></li>
+                                            </ul>
                                         </div>
                                     </div>
+                                    <!-- End Single Content -->
                                 </div>
                             </div>
-                        </form> 
+                        </div>
+                    </div>
+                    <!-- End Filter Menu -->
+                    <!-- End Product MEnu -->
+                    <div class="row product__list">
+                        <!-- Start Single Product -->
+                        <?php if(!empty($x)){
+                        foreach ($x as $y) {
+                         ?>
+                        <div class="col-md-4 single__pro col-lg-3 cat--1 col-sm-12">
+                            <div class="product foo">
+                                <div class="product__inner">
+                                    <div class="pro__thumb">
+                                        <a href="#">
+                                            <img src="../backoffice/img/<?php echo $y['platImage']; ?>" alt="product images">
+                                        </a>
+                                    </div>
+                                    <div class="product__hover__info">
+                                        <ul class="product__action">
+                                            <li><a data-toggle="modal" data-target="#productModal" title="Quick View" class="quick-view modal-view detail-link" href="shop.php?id_quick=<?php echo $y['platID']; ?>"><span class="ti-plus"></span></a></li>
+                                            <li><a title="Add TO Cart" href="cart.html"><span class="ti-shopping-cart"></span></a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="add__to__wishlist">
+                                        <a data-toggle="tooltip" title="Add To Wishlist" onclick="alert('Plat added to wishlist');" class="add-to-cart" href="wishlist.php?wish=<?php echo $y['platID']; ?>"><span class="ti-heart"></span></a>
+                                    </div>
+                                </div>
+                                <div class="product__details">
+                                    <h2><a href="product-details.html"><?php echo $y['platName']; ?></a></h2>
+                                    <ul class="product__price">
+                                        <li class="new__price">$<?php echo  $y['platPrice']; ?></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <?php } } ?>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- cart-main-area end -->
-        <!-- Start Footer Area -->
-        <footer class="htc__foooter__area" style="background: rgba(0, 0, 0, 0) url(images/bg/1.jpg) no-repeat scroll center center / cover ;">
+
+        <footer class="htc__foooter__area" style="background: rgba(0, 0, 0, 0) url(back.jpg) no-repeat scroll center center / cover ;">
             <div class="container">
                 <div class="row footer__container clearfix">
                     <!-- Start Single Footer Widget -->
@@ -386,7 +448,7 @@
                         <div class="ft__widget">
                             <div class="ft__logo">
                                 <a href="index.html">
-                                    <img src="images/logo/uniqlo.png" alt="footer logo">
+                                    <img src="logo.png" alt="footer logo">
                                 </a>
                             </div>
                             <div class="footer__details">
@@ -404,16 +466,14 @@
                                     <div id="mc_embed_signup">
                                         <form action="#" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" novalidate>
                                             <div id="mc_embed_signup_scroll" class="htc__news__inner">
-                                                <div class="news__input">
-                                                    <input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="Email Address" required>
-                                                </div>
+
                                                 <div class="clearfix subscribe__btn"><input type="submit" value="Send" name="subscribe" id="mc-embedded-subscribe" class="bst__btn btn--white__color">
 
                                                 </div>
                                             </div>
                                         </form>
                                     </div>
-                                </div>        
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -453,7 +513,7 @@
                                 </div>
                                 <ul class="footer__menu">
                                     <li><a href="index.html">Home</a></li>
-                                    <li><a href="shop.html">Product</a></li>
+                                    <li><a href="shop.php">Product</a></li>
                                     <li><a href="contact.html">Contact Us</a></li>
                                 </ul>
                             </div>
@@ -466,6 +526,89 @@
         <!-- End Footer Area -->
     </div>
     <!-- Body main wrapper end -->
+    <!-- QUICKVIEW PRODUCT -->
+
+    <div id="quickview-wrapper">
+        <?php// if(isset($_GET['id_quick']))
+        $gg=$plat->recupererplat((int)$_GET['id_quick']);
+
+        ?>
+        <!-- Modal -->
+        <div class="modal fade" id="productModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal__container" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <div class="modal-body">
+                        
+                        <div class="modal-product">
+                            <!-- Start product images -->
+
+                                  <div class="pro__thumb">
+                                        <a href="#">
+                                            <img src="../backoffice/img/<?php echo $i['platImage']; ?>" alt="product images">
+                                        </a>
+                                      <?php var_dump($i); ?>
+                                    </div>
+
+                            <!-- end product images -->
+                            <div class="product-info">
+                                <h1> Notre PLat </h1>
+                                <div class="rating__and__review">
+                                    <ul class="rating">
+                                        <li><span class="ti-star"></span></li>
+                                        <li><span class="ti-star"></span></li>
+                                        <li><span class="ti-star"></span></li>
+                                        <li><span class="ti-star"></span></li>
+                                        <li><span class="ti-star"></span></li>
+                                    </ul>
+                                    <div class="review">
+                                        <a href="#">4 customer reviews</a>
+                                    </div>
+                                </div>
+                                 <div class="quick-desc">
+                                    <?php echo $i['platName']; ?>
+                                </div><br>
+                                <div class="price-box-3">
+                                    <div class="s-price-box">
+                                         <a href="#">
+                                            <?php echo $i['platPrice']; ?>
+                                        </a>
+                                        <span class="old-price"> DT45.00</span>
+                                    </div>
+                                </div>
+                                <div class="quick-desc">
+                                    <?php echo $i['platDescription']; ?>
+                                </div>
+
+
+
+                                <div class="social-sharing">
+                                    <div class="widget widget_socialsharing_widget">
+                                        <h3 class="widget-title-modal">Share this product</h3>
+                                        <ul class="social-icons">
+                                            <li><a target="_blank" title="rss" href="#" class="rss social-icon"><i class="zmdi zmdi-rss"></i></a></li>
+                                            <li><a target="_blank" title="Linkedin" href="#" class="linkedin social-icon"><i class="zmdi zmdi-linkedin"></i></a></li>
+                                            <li><a target="_blank" title="Pinterest" href="#" class="pinterest social-icon"><i class="zmdi zmdi-pinterest"></i></a></li>
+                                            <li><a target="_blank" title="Tumblr" href="#" class="tumblr social-icon"><i class="zmdi zmdi-tumblr"></i></a></li>
+                                            <li><a target="_blank" title="Pinterest" href="#" class="pinterest social-icon"><i class="zmdi zmdi-pinterest"></i></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="addtocart-btn">
+                                    <a href="#">Add to cart</a>
+                                </div>
+                            </div><!-- .product-info -->
+                        </div><!-- .modal-product -->
+
+                    </div><!-- .modal-body -->
+                </div><!-- .modal-content -->
+            </div><!-- .modal-dialog -->
+        </div>
+        <!-- END Modal -->
+    </div>
+    <!-- END QUICKVIEW PRODUCT -->
     <!-- Placed js at the end of the document so the pages load faster -->
 
     <!-- jquery latest version -->
